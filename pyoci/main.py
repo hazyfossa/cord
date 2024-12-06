@@ -12,9 +12,11 @@ from pyoci.platform.zos import Zos
 from pyoci.process import Process
 from pyoci.runtime_hooks import Hooks
 
+from . import __spec_version__
+
 
 class Container(Struct):
-    ociVersion: str
+    ociVersion: str = __spec_version__
     hooks: Hooks | None = None
     annotations: Annotations | None = None
     hostname: str | None = None
