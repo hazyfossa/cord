@@ -1,9 +1,9 @@
 from collections.abc import Mapping, Sequence
 from typing import Any, Literal
 
-from pyoci.common import Struct
-from pyoci.filesystem import FilePath
-from pyoci.int_types import Uint16, Uint64
+from pyoci.spec.common import Struct
+from pyoci.spec.filesystem import FilePath
+from pyoci.spec.int_types import Uint16, Uint64
 
 
 class Device(Struct):

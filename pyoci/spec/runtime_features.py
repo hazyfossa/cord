@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 
-from pyoci.common import Annotations, Struct
-from pyoci.platform.linux.runtime_features import LinuxFeatures
+from pyoci.spec.common import Annotations, Struct
+from pyoci.spec.platform.linux.runtime_features import LinuxFeatures
 
 
 class Features(Struct):

@@ -3,8 +3,8 @@ from typing import Annotated
 
 from msgspec import Meta
 
-from pyoci.common import Env, Struct
-from pyoci.filesystem import FilePath
+from pyoci.spec.common import Env, Struct
+from pyoci.spec.filesystem import FilePath
 
 
 class Hook(Struct):

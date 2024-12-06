@@ -3,10 +3,10 @@ from typing import Annotated, Literal
 
 from msgspec import Meta, field
 
-from pyoci.common import GID, UID, Env, Struct
-from pyoci.int_types import Int32, Int64, Uint32, Uint64
-from pyoci.process.capabilities import Capabilities
-from pyoci.process.scheduler import Scheduler
+from pyoci.spec.common import GID, UID, Env, Struct
+from pyoci.spec.int_types import Int32, Uint32, Uint64
+from pyoci.spec.process.capabilities import Capabilities
+from pyoci.spec.process.scheduler import Scheduler
 
 Umask = Uint32
 

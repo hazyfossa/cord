@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 
-from pyoci.common import Struct
+from pyoci.spec.common import Struct
 
 
 class Capabilities(Struct):

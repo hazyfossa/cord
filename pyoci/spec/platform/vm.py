@@ -1,8 +1,8 @@
 from collections.abc import Sequence
 from typing import Literal
 
-from pyoci.common import Struct
-from pyoci.filesystem import FilePath
+from pyoci.spec.common import Struct
+from pyoci.spec.filesystem import FilePath
 
 RootImageFormat = Literal["raw", "qcow2", "vdi", "vmdk", "vhd"]
 

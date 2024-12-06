@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Mapping
 
 from msgspec import Struct
 
-from pyoci.int_types import Uint32
+from pyoci.spec.int_types import Uint32
 
 if not TYPE_CHECKING:
 

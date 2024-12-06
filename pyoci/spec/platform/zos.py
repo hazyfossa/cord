@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 
-from pyoci.common import Struct
-from pyoci.platform.linux.devices import Device
+from pyoci.spec.common import Struct
+from pyoci.spec.platform.linux.devices import Device
 
 
 class Zos(Struct):

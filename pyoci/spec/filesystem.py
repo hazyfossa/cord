@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 
-from pyoci.common import IDMapping, Struct
+from pyoci.spec.common import IDMapping, Struct
 
 FilePath = str
 
