@@ -1,30 +1,29 @@
 from collections.abc import Sequence
 from typing import Literal
 
-from msgspec import Struct
-
+from pyoci.common import Struct
 from pyoci.filesystem import FilePath
 
 RootImageFormat = Literal["raw", "qcow2", "vdi", "vmdk", "vhd"]
 
 
-class Image(Struct, omit_defaults=True):
+class Image(Struct):
     path: FilePath
     format: RootImageFormat
 
 
-class Hypervisor(Struct, omit_defaults=True):
+class Hypervisor(Struct):
     path: FilePath
     parameters: Sequence[str] | None = None
 
 
-class Kernel(Struct, omit_defaults=True):
+class Kernel(Struct):
     path: FilePath
     parameters: Sequence[str] | None = None
     initrd: FilePath | None = None
 
 
-class Vm(Struct, omit_defaults=True):
+class Vm(Struct):
     kernel: Kernel
     hypervisor: Hypervisor | None = None
     image: Image | None = None

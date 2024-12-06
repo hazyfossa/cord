@@ -1,8 +1,7 @@
 from collections.abc import Sequence
 from typing import Literal
 
-from msgspec import Struct
-
+from pyoci.common import Struct
 from pyoci.int_types import Uint32, Uint64
 
 SeccompOperators = Literal[
@@ -57,21 +56,21 @@ SeccompArch = Literal[
 ]
 
 
-class SyscallArg(Struct, omit_defaults=True):
+class SyscallArg(Struct):
     index: Uint32
     value: Uint64
     op: SeccompOperators
     valueTwo: Uint64 | None = None
 
 
-class Syscall(Struct, omit_defaults=True):
+class Syscall(Struct):
     names: Sequence[str]
     action: SeccompAction
     errnoRet: Uint32 | None = None
     args: Sequence[SyscallArg] | None = None
 
 
-class Seccomp(Struct, omit_defaults=True):
+class Seccomp(Struct):
     defaultAction: SeccompAction
     defaultErrnoRet: Uint32 | None = None
     flags: Sequence[SeccompFlag] | None = None

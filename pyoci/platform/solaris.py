@@ -1,9 +1,9 @@
 from collections.abc import Sequence
 
-from msgspec import Struct
+from pyoci.common import Struct
 
 
-class AnetItem(Struct, omit_defaults=True):
+class AnetItem(Struct):
     linkname: str | None = None
     lowerLink: str | None = None
     allowedAddress: str | None = None
@@ -13,16 +13,16 @@ class AnetItem(Struct, omit_defaults=True):
     linkProtection: str | None = None
 
 
-class CappedMemory(Struct, omit_defaults=True):
+class CappedMemory(Struct):
     physical: str | None = None
     swap: str | None = None
 
 
-class CappedCPU(Struct, omit_defaults=True):
+class CappedCPU(Struct):
     ncpus: str | None = None
 
 
-class Solaris(Struct, omit_defaults=True):
+class Solaris(Struct):
     """
     Solaris platform-specific configurations
     """

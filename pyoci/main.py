@@ -1,8 +1,8 @@
 from collections.abc import Sequence
 
-from msgspec import Struct, json
+from msgspec import json
 
-from pyoci.common import Annotations
+from pyoci.common import Annotations, Struct
 from pyoci.filesystem import Mount, Root
 from pyoci.platform.linux import Linux
 from pyoci.platform.solaris import Solaris
@@ -13,7 +13,7 @@ from pyoci.process import Process
 from pyoci.runtime_hooks import Hooks
 
 
-class Container(Struct, omit_defaults=True):
+class Container(Struct):
     ociVersion: str
     hooks: Hooks | None = None
     annotations: Annotations | None = None

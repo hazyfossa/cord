@@ -1,8 +1,8 @@
 from collections.abc import Sequence
 from typing import Literal
 
+from pyoci.common import Struct
 from pyoci.int_types import Int32, Uint64
-from msgspec import Struct
 
 SchedulerPolicy = Literal[
     "SCHED_OTHER",
@@ -25,7 +25,7 @@ SchedulerFlag = Literal[
 ]
 
 
-class Scheduler(Struct, omit_defaults=True):
+class Scheduler(Struct):
     policy: SchedulerPolicy
     nice: Int32 | None = None
     priority: Int32 | None = None

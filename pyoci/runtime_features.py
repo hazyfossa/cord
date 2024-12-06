@@ -1,8 +1,6 @@
 from collections.abc import Sequence
 
-from msgspec import Struct
-
-from pyoci.common import Annotations
+from pyoci.common import Annotations, Struct
 from pyoci.platform.linux.runtime_features import LinuxFeatures
 
 

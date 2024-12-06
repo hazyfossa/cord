@@ -1,9 +1,9 @@
 from collections.abc import Sequence
 from typing import Annotated
 
-from msgspec import Meta, Struct
+from msgspec import Meta
 
-from pyoci.common import GID, UID
+from pyoci.common import GID, UID, Struct
 from pyoci.filesystem import FilePath
 from pyoci.int_types import Int64, Uint16, Uint64
 
@@ -21,7 +21,7 @@ FileType = Annotated[
 ]
 
 
-class Device(Struct, omit_defaults=True):
+class Device(Struct):
     type: FileType
     path: FilePath
     fileMode: FileMode | None = None
@@ -31,7 +31,7 @@ class Device(Struct, omit_defaults=True):
     gid: GID | None = None
 
 
-class DeviceCgroup(Struct, omit_defaults=True):
+class DeviceCgroup(Struct):
     allow: bool
     type: str | None = None
     major: Major | None = None
@@ -39,7 +39,7 @@ class DeviceCgroup(Struct, omit_defaults=True):
     access: str | None = None
 
 
-class BlockIODevice(Struct, omit_defaults=True):
+class BlockIODevice(Struct):
     major: Major
     minor: Minor
 
@@ -56,7 +56,7 @@ class BlockIODeviceWeight(BlockIODevice):
     leafWeight: Weight | None = None
 
 
-class BlockIO(Struct, omit_defaults=True):
+class BlockIO(Struct):
     weight: Weight | None = None
     leafWeight: Weight | None = None
     throttleReadBpsDevice: Sequence[BlockIODeviceThrottle] | None = None

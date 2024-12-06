@@ -1,9 +1,9 @@
-from msgspec import Struct
-
 from collections.abc import Sequence
 
+from pyoci.common import Struct
 
-class Capabilities(Struct, omit_defaults=True):
+
+class Capabilities(Struct):
     bounding: Sequence[str] | None = None
     permitted: Sequence[str] | None = None
     effective: Sequence[str] | None = None

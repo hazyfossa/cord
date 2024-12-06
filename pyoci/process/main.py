@@ -1,9 +1,9 @@
 from collections.abc import Sequence
 from typing import Annotated, Literal
 
-from msgspec import Meta, Struct, field
+from msgspec import Meta, field
 
-from pyoci.common import GID, UID, Env
+from pyoci.common import GID, UID, Env, Struct
 from pyoci.int_types import Int32, Int64, Uint32, Uint64
 from pyoci.process.capabilities import Capabilities
 from pyoci.process.scheduler import Scheduler
@@ -17,7 +17,7 @@ class Rlimit(Struct):
     type: Annotated[str, Meta(pattern="^RLIMIT_[A-Z]+$")]
 
 
-class IoPriority(Struct, omit_defaults=True):
+class IoPriority(Struct):
     class_: Literal["IOPRIO_CLASS_RT", "IOPRIO_CLASS_BE", "IOPRIO_CLASS_IDLE"] = field(name="class")
     priority: Int32 | None = None
 
@@ -27,12 +27,12 @@ class ConsoleSize(Struct):
     width: Uint64
 
 
-class ExecCPUAffinity(Struct, omit_defaults=True):
+class ExecCPUAffinity(Struct):
     initial: Annotated[str, Meta(pattern="^[0-9, -]*$")] | None = None
     final: Annotated[str, Meta(pattern="^[0-9, -]*$")] | None = None
 
 
-class User(Struct, omit_defaults=True):
+class User(Struct):
     uid: UID | None = None
     gid: GID | None = None
     umask: Umask | None = None
@@ -40,7 +40,7 @@ class User(Struct, omit_defaults=True):
     username: str | None = None
 
 
-class Process(Struct, omit_defaults=True):
+class Process(Struct):
     cwd: str
     args: Sequence[str] | None = None
     commandLine: str | None = None

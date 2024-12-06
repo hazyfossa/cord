@@ -1,13 +1,11 @@
 from collections.abc import Sequence
 
-from msgspec import Struct
-
-from pyoci.common import IDMapping
+from pyoci.common import IDMapping, Struct
 
 FilePath = str
 
 
-class Root(Struct, omit_defaults=True):
+class Root(Struct):
     """
     Configures the container's root filesystem.
     """
@@ -16,7 +14,7 @@ class Root(Struct, omit_defaults=True):
     readonly: bool | None = None
 
 
-class Mount(Struct, omit_defaults=True):
+class Mount(Struct):
     destination: FilePath
     source: FilePath | None = None
     options: Sequence[str] | None = None
