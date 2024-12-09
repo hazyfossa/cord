@@ -2,6 +2,8 @@ from typing import Annotated
 
 from msgspec import Meta
 
+# TODO: Add supportfor disabling these checks
+
 Int8 = Annotated[int, Meta(ge=-128, le=127)]
 Int16 = Annotated[int, Meta(ge=-32768, le=32767)]
 Int32 = Annotated[int, Meta(ge=-2147483648, le=2147483647)]

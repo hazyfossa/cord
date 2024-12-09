@@ -7,7 +7,7 @@ from pyoci.spec.common import Struct
 from pyoci.spec.platform.linux.main import NamespaceType
 from pyoci.spec.platform.linux.seccomp import SeccompFeature
 
-Capability = Annotated[str, Meta(pattern="^CAP_[A-Z_]+$")]
+Capability = Annotated[str, Meta(pattern="^CAP_[A-Z_]+$")]  # TODO does this need to be strict? Performance impact?
 
 
 class Cgroup(Struct):

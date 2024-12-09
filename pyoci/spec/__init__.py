@@ -10,7 +10,7 @@ from pyoci.spec.platform.vm import Vm
 from pyoci.spec.platform.windows import Windows
 from pyoci.spec.platform.zos import Zos
 from pyoci.spec.process import Process
-from pyoci.spec.runtime_hooks import Hooks
+from pyoci.spec.hooks import Hooks
 
 
 class Container(Struct):
