@@ -3,10 +3,10 @@ from typing import Annotated, Literal
 
 from msgspec import Meta, field
 
-from pyoci.spec.common import GID, UID, Env, Struct
-from pyoci.spec.int_types import Int32, Uint32, Uint64
-from pyoci.spec.process.capabilities import Capabilities
-from pyoci.spec.process.scheduler import Scheduler
+from pyoci.common import GID, UID, Struct
+from pyoci.int_types import Int32, Uint32, Uint64
+from pyoci.config.process.capabilities import Capabilities
+from pyoci.config.process.scheduler import Scheduler
 
 Umask = Uint32
 
@@ -41,6 +41,9 @@ class User(Struct):
     umask: Umask | None = None
     additionalGids: Sequence[GID] | None = None
     username: str | None = None
+
+
+Env = Sequence[str]
 
 
 class Process(Struct):

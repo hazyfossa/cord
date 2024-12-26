@@ -3,9 +3,9 @@ from typing import Annotated
 
 from msgspec import Meta
 
-from pyoci.spec.common import GID, UID, Struct
-from pyoci.spec.filesystem import FilePath
-from pyoci.spec.int_types import Int64, Uint16, Uint64
+from pyoci.common import GID, UID, Struct
+from pyoci.config.filesystem import FilePath
+from pyoci.int_types import Int64, Uint16, Uint64
 
 Major = Annotated[Int64, Meta(description="major device number")]
 Minor = Annotated[Int64, Meta(description="minor device number")]

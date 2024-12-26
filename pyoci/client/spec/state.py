@@ -1,8 +1,8 @@
 from typing import Annotated, Literal
 from msgspec import Meta
 
-from pyoci.spec import Annotations
-from pyoci.spec.common import Struct
+from pyoci.config import Annotations
+from pyoci.common import Struct
 
 Status = Literal["creating", "created", "running", "stopped"]
 

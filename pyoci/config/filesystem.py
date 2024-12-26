@@ -1,6 +1,7 @@
 from collections.abc import Sequence
 
-from pyoci.spec.common import IDMapping, Struct
+from pyoci.common import Struct
+from pyoci.int_types import Uint32
 
 FilePath = str
 
@@ -8,6 +9,12 @@ FilePath = str
 class Root(Struct):
     path: FilePath
     readonly: bool | None = None
+
+
+class IDMapping(Struct):
+    containerID: Uint32
+    hostID: Uint32
+    size: Uint32
 
 
 class Mount(Struct):

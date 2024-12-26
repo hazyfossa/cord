@@ -2,15 +2,15 @@ __spec_version__ = "1.2.0"
 
 from collections.abc import Sequence
 
-from pyoci.spec.common import Annotations, Struct
-from pyoci.spec.filesystem import Mount, Root
-from pyoci.spec.platform.linux import Linux
-from pyoci.spec.platform.solaris import Solaris
-from pyoci.spec.platform.vm import Vm
-from pyoci.spec.platform.windows import Windows
-from pyoci.spec.platform.zos import Zos
-from pyoci.spec.process import Process
-from pyoci.spec.hooks import Hooks
+from pyoci.common import Annotations, Struct
+from pyoci.config.filesystem import Mount, Root
+from pyoci.config.platform.linux import Linux
+from pyoci.config.platform.solaris import Solaris
+from pyoci.config.platform.vm import Vm
+from pyoci.config.platform.windows import Windows
+from pyoci.config.platform.zos import Zos
+from pyoci.config.process import Process
+from pyoci.config.hooks import Hooks
 
 
 class Container(Struct):

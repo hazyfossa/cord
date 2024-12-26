@@ -3,8 +3,9 @@ from typing import Annotated
 
 from msgspec import Meta
 
-from pyoci.spec.common import Env, Struct
-from pyoci.spec.filesystem import FilePath
+from pyoci.common import Struct
+from pyoci.config.filesystem import FilePath
+from pyoci.config.process.main import Env
 
 
 class Hook(Struct):

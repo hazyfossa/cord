@@ -1,8 +1,8 @@
 from collections.abc import Sequence
 from typing import Literal
 
-from pyoci.spec.common import Struct
-from pyoci.spec.int_types import Uint32, Uint64
+from pyoci.common import Struct
+from pyoci.int_types import Uint32, Uint64
 
 SeccompOperators = Literal[
     "SCMP_CMP_NE",

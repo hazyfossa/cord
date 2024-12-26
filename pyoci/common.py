@@ -1,9 +1,8 @@
-from collections.abc import Sequence
 from typing import TYPE_CHECKING, Mapping
 
 from msgspec import Struct
 
-from pyoci.spec.int_types import Uint32
+from pyoci.int_types import Uint32
 
 if not TYPE_CHECKING:
 
@@ -18,14 +17,5 @@ if not TYPE_CHECKING:
 UID = Uint32
 
 GID = Uint32
-
-Env = Sequence[str]
-
-
-class IDMapping(Struct):
-    containerID: Uint32
-    hostID: Uint32
-    size: Uint32
-
 
 Annotations = Mapping[str, str]

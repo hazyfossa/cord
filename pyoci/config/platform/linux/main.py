@@ -3,11 +3,11 @@ from typing import Annotated, Literal
 
 from msgspec import Meta
 
-from pyoci.spec.common import IDMapping, Struct
-from pyoci.spec.filesystem import FilePath
-from pyoci.spec.int_types import Int64, Uint32, Uint64
-from pyoci.spec.platform.linux.devices import BlockIO, Device, DeviceCgroup
-from pyoci.spec.platform.linux.seccomp import Seccomp
+from pyoci.common import Struct
+from pyoci.config.filesystem import FilePath, IDMapping
+from pyoci.int_types import Int64, Uint32, Uint64
+from pyoci.config.platform.linux.devices import BlockIO, Device, DeviceCgroup
+from pyoci.config.platform.linux.seccomp import Seccomp
 
 
 class TimeOffsets(Struct):

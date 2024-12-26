@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 
-from pyoci.spec.common import Annotations, Struct
+from pyoci.common import Annotations, Struct
 from .linux_features import LinuxFeatures
 
 

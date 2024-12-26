@@ -3,9 +3,9 @@ from typing import Annotated
 
 from msgspec import Meta
 
-from pyoci.spec.common import Struct
-from pyoci.spec.platform.linux.main import NamespaceType
-from pyoci.spec.platform.linux.seccomp import SeccompFeature
+from pyoci.common import Struct
+from pyoci.config.platform.linux.main import NamespaceType
+from pyoci.config.platform.linux.seccomp import SeccompFeature
 
 Capability = Annotated[str, Meta(pattern="^CAP_[A-Z_]+$")]  # TODO does this need to be strict? Performance impact?
 
