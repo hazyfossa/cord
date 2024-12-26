@@ -15,6 +15,9 @@ class Hook(Struct):
 
 
 class Hooks(Struct):
+    """
+    https://github.com/opencontainers/runtime-spec/blob/main/config.md#posix-platform-hooks
+    """
     prestart: Sequence[Hook] | None = None
     createRuntime: Sequence[Hook] | None = None
     createContainer: Sequence[Hook] | None = None

@@ -24,7 +24,7 @@ class CappedCPU(Struct):
 
 class Solaris(Struct):
     """
-    Solaris platform-specific configurations
+    https://github.com/opencontainers/runtime-spec/blob/main/config-solaris.md
     """
 
     milestone: str | None = None

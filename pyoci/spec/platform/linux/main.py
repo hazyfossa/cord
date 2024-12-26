@@ -106,7 +106,7 @@ class Personality(Struct):
 
 class Linux(Struct):
     """
-    Linux platform-specific configurations
+    https://github.com/opencontainers/runtime-spec/blob/main/config-linux.md
     """
 
     devices: Sequence[Device] | None = None

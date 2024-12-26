@@ -47,7 +47,7 @@ class Resources(Struct):
 
 class Windows(Struct):
     """
-    Windows platform-specific configurations
+    https://github.com/opencontainers/runtime-spec/blob/main/config-windows.md
     """
 
     layerFolders: Sequence[FilePath]

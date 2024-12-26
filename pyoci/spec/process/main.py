@@ -33,6 +33,9 @@ class ExecCPUAffinity(Struct):
 
 
 class User(Struct):
+    """
+    https://github.com/opencontainers/runtime-spec/blob/main/config.md#user
+    """
     uid: UID | None = None
     gid: GID | None = None
     umask: Umask | None = None
@@ -41,6 +44,9 @@ class User(Struct):
 
 
 class Process(Struct):
+    """
+    https://github.com/opencontainers/runtime-spec/blob/main/config.md#process
+    """
     cwd: str
     args: Sequence[str] | None = None
     commandLine: str | None = None

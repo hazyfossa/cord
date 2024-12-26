@@ -6,15 +6,14 @@ FilePath = str
 
 
 class Root(Struct):
-    """
-    Configures the container's root filesystem.
-    """
-
     path: FilePath
     readonly: bool | None = None
 
 
 class Mount(Struct):
+    """
+    https://github.com/opencontainers/runtime-spec/blob/main/config.md#mounts
+    """
     destination: FilePath
     source: FilePath | None = None
     options: Sequence[str] | None = None

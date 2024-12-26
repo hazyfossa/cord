@@ -6,7 +6,7 @@ from pyoci.spec.platform.linux.devices import Device
 
 class Zos(Struct):
     """
-    z/OS platform-specific configurations
+    https://github.com/opencontainers/runtime-spec/blob/main/config-zos.md
     """
 
     devices: Sequence[Device] | None = None

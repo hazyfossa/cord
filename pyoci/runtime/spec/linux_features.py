@@ -33,6 +33,9 @@ class MountExtensions(Struct):
 
 
 class LinuxFeatures(Struct):
+    """
+    https://github.com/opencontainers/runtime-spec/blob/main/features-linux.md
+    """
     namespaces: Sequence[NamespaceType] | None = None
     capabilities: Sequence[Capability] | None = None
     cgroup: Cgroup | None = None

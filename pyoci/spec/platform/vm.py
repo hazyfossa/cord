@@ -24,6 +24,9 @@ class Kernel(Struct):
 
 
 class Vm(Struct):
+    """
+    https://github.com/opencontainers/runtime-spec/blob/main/config-vm.md
+    """
     kernel: Kernel
     hypervisor: Hypervisor | None = None
     image: Image | None = None
