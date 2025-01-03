@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from pyoci.base_types import Annotations
 from pyoci.runtime import __oci_version__
 
-from pyoci.common import Struct, versioned
+from pyoci.common import Struct, const_field
 from pyoci.runtime.config.filesystem import Mount, Root
 from pyoci.runtime.config.hooks import Hooks
 from pyoci.runtime.config.platform.linux import Linux
@@ -15,7 +15,7 @@ from pyoci.runtime.config.platform.zos import Zos
 from pyoci.runtime.config.process import Process
 
 
-@versioned(__oci_version__)
+@const_field("ociVersion", __oci_version__)
 class Container(Struct):
     if not TYPE_CHECKING:
         ociVersion: str

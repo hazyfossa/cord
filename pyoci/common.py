@@ -1,5 +1,5 @@
 from functools import partial
-from typing import TypeVar, TYPE_CHECKING
+from typing import TypeVar, TYPE_CHECKING, Any
 from msgspec import Struct
 
 if not TYPE_CHECKING:
@@ -14,8 +14,13 @@ if not TYPE_CHECKING:
 T = TypeVar("T")  # TODO ref-py-3.13
 
 
-def versioned(oci_version: str):
+def const_field(field: str, value: Any):  # TODO check on deserialization.
+    """
+    Important: Don't forget to add the field to the Struct
+    with 'if not TYPE_CHECKING: field: {type}'
+    """
+
     def wrapper(struct: T) -> T:
-        return partial(struct, ociVersion=oci_version)  # type: ignore
+        return partial(struct, **{field: value})  # type: ignore
 
     return wrapper

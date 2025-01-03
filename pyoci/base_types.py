@@ -20,7 +20,7 @@ Uint64Pointer = Uint64 | None
 UID = Uint32
 GID = Uint32
 
-Base64 = str
+Data = Annotated[bytes, "Base64"]
 StringPointer = str | None
 
 MapStringObject = Mapping[str, Mapping[str, Any]]
