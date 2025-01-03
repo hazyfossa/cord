@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Any, Mapping
 
 from msgspec import Meta
 
@@ -13,5 +13,15 @@ Uint16 = Annotated[int, Meta(ge=0, le=65535)]
 Uint32 = Annotated[int, Meta(ge=0, le=4294967295)]
 # Uint64 = Annotated[int, Meta(ge=0, le=18446744073709551615)] Msgspec doesn't support 'le' on values that won't fit into Int64
 Uint64 = Annotated[int, Meta(ge=0), "le=18446744073709551615"]
+
+Uint16Pointer = Uint16 | None
+Uint64Pointer = Uint64 | None
+
 UID = Uint32
 GID = Uint32
+
+Base64 = str
+StringPointer = str | None
+
+MapStringObject = Mapping[str, Mapping[str, Any]]
+Annotations = Mapping[str, str]

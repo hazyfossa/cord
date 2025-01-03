@@ -4,7 +4,7 @@ from typing import Annotated, Literal
 from msgspec import Meta, field
 
 from pyoci.common import Struct
-from pyoci.int_types import GID, UID, Int32, Uint32, Uint64
+from pyoci.base_types import GID, UID, Int32, Uint32, Uint64
 
 Umask = Uint32
 

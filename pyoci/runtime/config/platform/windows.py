@@ -3,7 +3,7 @@ from typing import Any, Literal
 
 from pyoci.common import Struct
 from pyoci.runtime.config.filesystem import FilePath
-from pyoci.int_types import Uint16, Uint64
+from pyoci.base_types import Uint16, Uint64
 
 
 class Device(Struct):

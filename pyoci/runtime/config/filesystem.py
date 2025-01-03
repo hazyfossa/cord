@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 
 from pyoci.common import Struct
-from pyoci.int_types import Uint32
+from pyoci.base_types import Uint32
 
 FilePath = str
 

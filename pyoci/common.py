@@ -1,5 +1,5 @@
 from functools import partial
-from typing import Mapping, TypeVar, TYPE_CHECKING
+from typing import TypeVar, TYPE_CHECKING
 from msgspec import Struct
 
 if not TYPE_CHECKING:
@@ -19,6 +19,3 @@ def versioned(oci_version: str):
         return partial(struct, ociVersion=oci_version)  # type: ignore
 
     return wrapper
-
-
-Annotations = Mapping[str, str]

@@ -1,9 +1,10 @@
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
+from pyoci.base_types import Annotations
 from pyoci.runtime import __oci_version__
 
-from pyoci.common import Annotations, Struct, versioned
+from pyoci.common import Struct, versioned
 from pyoci.runtime.config.filesystem import Mount, Root
 from pyoci.runtime.config.hooks import Hooks
 from pyoci.runtime.config.platform.linux import Linux

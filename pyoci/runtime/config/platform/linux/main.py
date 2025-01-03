@@ -3,9 +3,9 @@ from typing import Annotated, Literal
 
 from msgspec import Meta
 
+from pyoci.base_types import Int64, Uint32, Uint64
 from pyoci.common import Struct
 from pyoci.runtime.config.filesystem import FilePath, IDMapping
-from pyoci.int_types import Int64, Uint32, Uint64
 from pyoci.runtime.config.platform.linux.devices import BlockIO, Device, DeviceCgroup
 from pyoci.runtime.config.platform.linux.seccomp import Seccomp
 

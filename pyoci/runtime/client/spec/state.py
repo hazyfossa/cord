@@ -2,7 +2,8 @@ from typing import TYPE_CHECKING, Annotated, Literal
 
 from msgspec import Meta
 
-from pyoci.common import Annotations, Struct, versioned
+from pyoci.base_types import Annotations
+from pyoci.common import Struct, versioned
 from pyoci.runtime import __oci_version__
 
 Status = Literal["creating", "created", "running", "stopped"]
