@@ -1,21 +1,20 @@
-__spec_version__ = "1.2.0"
-
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
-from pyoci.common import Annotations, Struct
-from pyoci.config.filesystem import Mount, Root
-from pyoci.config.hooks import Hooks
-from pyoci.config.platform.linux import Linux
-from pyoci.config.platform.solaris import Solaris
-from pyoci.config.platform.vm import Vm
-from pyoci.config.platform.windows import Windows
-from pyoci.config.platform.zos import Zos
-from pyoci.config.process import Process
-from pyoci.version_utils import versioned
+from pyoci.runtime import __oci_version__
+
+from pyoci.common import Annotations, Struct, versioned
+from pyoci.runtime.config.filesystem import Mount, Root
+from pyoci.runtime.config.hooks import Hooks
+from pyoci.runtime.config.platform.linux import Linux
+from pyoci.runtime.config.platform.solaris import Solaris
+from pyoci.runtime.config.platform.vm import Vm
+from pyoci.runtime.config.platform.windows import Windows
+from pyoci.runtime.config.platform.zos import Zos
+from pyoci.runtime.config.process import Process
 
 
-@versioned
+@versioned(__oci_version__)
 class Container(Struct):
     if not TYPE_CHECKING:
         ociVersion: str

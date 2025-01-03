@@ -3,10 +3,8 @@ from typing import Annotated, Literal
 
 from msgspec import Meta, field
 
-from pyoci.common import GID, UID, Struct
-from pyoci.config.process.capabilities import Capabilities
-from pyoci.config.process.scheduler import Scheduler
-from pyoci.int_types import Int32, Uint32, Uint64
+from pyoci.common import Struct
+from pyoci.int_types import GID, UID, Int32, Uint32, Uint64
 
 Umask = Uint32
 
@@ -18,7 +16,12 @@ class Rlimit(Struct):
 
 
 class IoPriority(Struct):
-    class_: Literal["IOPRIO_CLASS_RT", "IOPRIO_CLASS_BE", "IOPRIO_CLASS_IDLE"] = field(name="class")
+    class_: Literal[
+        "IOPRIO_CLASS_RT",
+        "IOPRIO_CLASS_BE",
+        "IOPRIO_CLASS_IDLE",
+    ] = field(name="class")
+
     priority: Int32 | None = None
 
 
@@ -36,6 +39,7 @@ class User(Struct):
     """
     https://github.com/opencontainers/runtime-spec/blob/main/config.md#user
     """
+
     uid: UID | None = None
     gid: GID | None = None
     umask: Umask | None = None
@@ -45,11 +49,55 @@ class User(Struct):
 
 Env = Sequence[str]
 
+Capability = Annotated[
+    str, Meta(pattern="^CAP_[A-Z_]+$")
+]  # TODO does this need to be strict? Performance impact?
+
+
+class Capabilities(Struct):
+    bounding: Sequence[Capability] | None = None
+    permitted: Sequence[Capability] | None = None
+    effective: Sequence[Capability] | None = None
+    inheritable: Sequence[Capability] | None = None
+    ambient: Sequence[Capability] | None = None
+
+
+SchedulerPolicy = Literal[
+    "SCHED_OTHER",
+    "SCHED_FIFO",
+    "SCHED_RR",
+    "SCHED_BATCH",
+    "SCHED_ISO",
+    "SCHED_IDLE",
+    "SCHED_DEADLINE",
+]
+
+SchedulerFlag = Literal[
+    "SCHED_FLAG_RESET_ON_FORK",
+    "SCHED_FLAG_RECLAIM",
+    "SCHED_FLAG_DL_OVERRUN",
+    "SCHED_FLAG_KEEP_POLICY",
+    "SCHED_FLAG_KEEP_PARAMS",
+    "SCHED_FLAG_UTIL_CLAMP_MIN",
+    "SCHED_FLAG_UTIL_CLAMP_MAX",
+]
+
+
+class Scheduler(Struct):
+    policy: SchedulerPolicy
+    nice: Int32 | None = None
+    priority: Int32 | None = None
+    flags: Sequence[SchedulerFlag] | None = None
+    runtime: Uint64 | None = None
+    deadline: Uint64 | None = None
+    period: Uint64 | None = None
+
 
 class Process(Struct):
     """
     https://github.com/opencontainers/runtime-spec/blob/main/config.md#process
     """
+
     cwd: str
     args: Sequence[str] | None = None
     commandLine: str | None = None

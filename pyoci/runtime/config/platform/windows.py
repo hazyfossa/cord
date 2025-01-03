@@ -2,7 +2,7 @@ from collections.abc import Mapping, Sequence
 from typing import Any, Literal
 
 from pyoci.common import Struct
-from pyoci.config.filesystem import FilePath
+from pyoci.runtime.config.filesystem import FilePath
 from pyoci.int_types import Uint16, Uint64
 
 

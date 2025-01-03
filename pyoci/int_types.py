@@ -13,3 +13,5 @@ Uint16 = Annotated[int, Meta(ge=0, le=65535)]
 Uint32 = Annotated[int, Meta(ge=0, le=4294967295)]
 # Uint64 = Annotated[int, Meta(ge=0, le=18446744073709551615)] Msgspec doesn't support 'le' on values that won't fit into Int64
 Uint64 = Annotated[int, Meta(ge=0), "le=18446744073709551615"]
+UID = Uint32
+GID = Uint32

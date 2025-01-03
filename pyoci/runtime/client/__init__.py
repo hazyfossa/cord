@@ -4,9 +4,9 @@ from subprocess import run
 from typing import Literal
 from msgspec import json
 
-from pyoci.client.cli import CLIArguments, flag, option
-from pyoci.client.spec.state import State
-from pyoci.client.spec.features import Features
+from pyoci.runtime.client.cli import CLIArguments, flag, option
+from pyoci.runtime.client.spec.state import State
+from pyoci.runtime.client.spec.features import Features
 
 
 @dataclass

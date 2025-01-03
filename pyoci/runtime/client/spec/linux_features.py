@@ -1,13 +1,9 @@
 from collections.abc import Sequence
-from typing import Annotated
-
-from msgspec import Meta
 
 from pyoci.common import Struct
-from pyoci.config.platform.linux.main import NamespaceType
-from pyoci.config.platform.linux.seccomp import SeccompFeature
-
-Capability = Annotated[str, Meta(pattern="^CAP_[A-Z_]+$")]  # TODO does this need to be strict? Performance impact?
+from pyoci.runtime.config.platform.linux.main import NamespaceType
+from pyoci.runtime.config.platform.linux.seccomp import SeccompFeature
+from pyoci.runtime.config.process import Capability
 
 
 class Cgroup(Struct):
@@ -36,6 +32,7 @@ class LinuxFeatures(Struct):
     """
     https://github.com/opencontainers/runtime-spec/blob/main/features-linux.md
     """
+
     namespaces: Sequence[NamespaceType] | None = None
     capabilities: Sequence[Capability] | None = None
     cgroup: Cgroup | None = None

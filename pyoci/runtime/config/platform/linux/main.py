@@ -4,10 +4,10 @@ from typing import Annotated, Literal
 from msgspec import Meta
 
 from pyoci.common import Struct
-from pyoci.config.filesystem import FilePath, IDMapping
+from pyoci.runtime.config.filesystem import FilePath, IDMapping
 from pyoci.int_types import Int64, Uint32, Uint64
-from pyoci.config.platform.linux.devices import BlockIO, Device, DeviceCgroup
-from pyoci.config.platform.linux.seccomp import Seccomp
+from pyoci.runtime.config.platform.linux.devices import BlockIO, Device, DeviceCgroup
+from pyoci.runtime.config.platform.linux.seccomp import Seccomp
 
 
 class TimeOffsets(Struct):
@@ -88,7 +88,9 @@ class Resources(Struct):
     rdma: Mapping[str, Rdma] | None = None
 
 
-NamespaceType = Literal["mount", "pid", "network", "uts", "ipc", "user", "cgroup", "time"]
+NamespaceType = Literal[
+    "mount", "pid", "network", "uts", "ipc", "user", "cgroup", "time"
+]
 
 
 class NamespaceReference(Struct):

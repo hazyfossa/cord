@@ -2,7 +2,7 @@ from collections.abc import Sequence
 from typing import Literal
 
 from pyoci.common import Struct
-from pyoci.config.filesystem import FilePath
+from pyoci.runtime.config.filesystem import FilePath
 
 RootImageFormat = Literal["raw", "qcow2", "vdi", "vmdk", "vhd"]
 
@@ -27,6 +27,7 @@ class Vm(Struct):
     """
     https://github.com/opencontainers/runtime-spec/blob/main/config-vm.md
     """
+
     kernel: Kernel
     hypervisor: Hypervisor | None = None
     image: Image | None = None

@@ -4,8 +4,8 @@ from typing import Annotated
 from msgspec import Meta
 
 from pyoci.common import Struct
-from pyoci.config.filesystem import FilePath
-from pyoci.config.process.main import Env
+from pyoci.runtime.config.filesystem import FilePath
+from pyoci.runtime.config.process import Env
 
 
 class Hook(Struct):
@@ -19,6 +19,7 @@ class Hooks(Struct):
     """
     https://github.com/opencontainers/runtime-spec/blob/main/config.md#posix-platform-hooks
     """
+
     prestart: Sequence[Hook] | None = None
     createRuntime: Sequence[Hook] | None = None
     createContainer: Sequence[Hook] | None = None

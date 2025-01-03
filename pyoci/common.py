@@ -1,8 +1,6 @@
-from typing import TYPE_CHECKING, Mapping
-
+from functools import partial
+from typing import Mapping, TypeVar, TYPE_CHECKING
 from msgspec import Struct
-
-from pyoci.int_types import Uint32
 
 if not TYPE_CHECKING:
 
@@ -13,9 +11,14 @@ if not TYPE_CHECKING:
     # It would be better to avoid the placeholders completely, but that breaks python's dataclasses
     # so we need to specify each field as optional manually like this ": x | None = None"
 
+T = TypeVar("T")  # TODO ref-py-3.13
 
-UID = Uint32
 
-GID = Uint32
+def versioned(oci_version: str):
+    def wrapper(struct: T) -> T:
+        return partial(struct, ociVersion=oci_version)  # type: ignore
+
+    return wrapper
+
 
 Annotations = Mapping[str, str]

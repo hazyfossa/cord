@@ -1,6 +1,7 @@
 from collections.abc import Sequence
 
-from pyoci.common import Annotations, Struct
+from pyoci.common import Struct
+from pyoci.common import Annotations
 from .linux_features import LinuxFeatures
 
 
@@ -8,7 +9,7 @@ class Features(Struct):
     """
     https://github.com/opencontainers/runtime-spec/blob/main/features.md
 
-    Features of the runtime. Unrelated to features of the host.
+    Features of the pyoci.runtime. Unrelated to features of the host.
     None means "unknown", not "unsupported".
     """
 
