@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 
 from pyoci.common import Struct, Unset, UNSET
-from pyoci.runtime.config.platform.linux.main import NamespaceType
+from pyoci.runtime.config.platform.linux import NamespaceType
 from pyoci.runtime.config.platform.linux.seccomp import SeccompFeature
 from pyoci.runtime.config.process import Capability
 

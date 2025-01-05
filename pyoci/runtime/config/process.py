@@ -10,9 +10,9 @@ Umask = Uint32
 
 
 class Rlimit(Struct):
+    type: Annotated[str, Meta(pattern="^RLIMIT_[A-Z]+$")]
     hard: Uint64
     soft: Uint64
-    type: Annotated[str, Meta(pattern="^RLIMIT_[A-Z]+$")]
 
 
 class IoPriority(Struct):

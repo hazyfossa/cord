@@ -1,10 +1,8 @@
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
-from msgspec import UNSET, Struct
-from msgspec import UnsetType as Unset
-
 from pyoci.base_types import Annotations
+from pyoci.common import UNSET, Struct, Unset
 from pyoci.runtime import __oci_version__
 from pyoci.runtime.config.filesystem import Mount, Root
 from pyoci.runtime.config.hooks import Hooks
