@@ -9,8 +9,7 @@ from pyoci.runtime import __oci_version__
 Status = Literal["creating", "created", "running", "stopped"]
 
 
-@const_field("ociVersion", __oci_version__)
-class State(Struct):
+class BaseState(Struct):
     if not TYPE_CHECKING:
         ociVersion: str
 
@@ -19,3 +18,7 @@ class State(Struct):
     bundle: str
     pid: Annotated[int, Meta(ge=0)] | None = None
     annotations: Annotations | None = None
+
+
+@const_field("ociVersion", __oci_version__)
+class State(BaseState): ...
