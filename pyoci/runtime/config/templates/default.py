@@ -1,6 +1,8 @@
 from collections.abc import Sequence
 from typing import Any
 
+from msgspec import field
+
 from pyoci.common import Struct, Unset
 from pyoci.runtime.config import Container as BaseContainer
 from pyoci.runtime.config.filesystem import Mount, Root
@@ -148,7 +150,7 @@ env_path = "/usr/local/bin:/usr/bin:/bin"  # TODO
 
 class Process(BaseProcess, Struct):
     cwd: str = "/"
-    user: User | Unset = root_user
+    user: User | Unset = field(default_factory=lambda: root_user)
     noNewPrivileges: bool | Unset = True
 
     def __post_init__(self):
@@ -159,19 +161,19 @@ class Process(BaseProcess, Struct):
 
 
 class Resources(BaseResources, Struct):
-    devices: Sequence[DeviceCgroup] | Unset = devices
+    devices: Sequence[DeviceCgroup] | Unset = field(default_factory=lambda: devices)
 
 
 class Linux(BaseLinux, Struct):
-    namespaces: Sequence[Namespace] | Unset = namespaces
+    namespaces: Sequence[Namespace] | Unset = field(default_factory=lambda: namespaces)
     rootfsPropagation: RootfsPropagation | Unset = "private"
-    maskedPaths: Sequence[str] | Unset = masked_paths
-    readonlyPaths: Sequence[str] | Unset = readonly_paths
-    resources: BaseResources | Unset = Resources()
+    maskedPaths: Sequence[str] | Unset = field(default_factory=lambda: masked_paths)
+    readonlyPaths: Sequence[str] | Unset = field(default_factory=lambda: readonly_paths)
+    resources: BaseResources | Unset = field(default_factory=lambda: Resources())
 
 
 class Container(BaseContainer, Struct):
-    root: Root | Unset = Root(path=rootfs)
-    user: User | Unset = root_user
-    process: BaseProcess | Unset = Process()
-    linux: BaseLinux | Unset = Linux()
+    root: Root | Unset = field(default_factory=lambda: Root(path=rootfs))
+    user: User | Unset = field(default_factory=lambda: root_user)
+    process: BaseProcess | Unset = field(default_factory=lambda: Process())
+    linux: BaseLinux | Unset = field(default_factory=lambda: Linux())
