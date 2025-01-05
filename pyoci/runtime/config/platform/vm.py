@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 from typing import Literal
 
-from pyoci.common import Struct
+from pyoci.common import Struct, Unset, UNSET
 from pyoci.runtime.config.filesystem import FilePath
 
 RootImageFormat = Literal["raw", "qcow2", "vdi", "vmdk", "vhd"]
@@ -14,13 +14,13 @@ class Image(Struct):
 
 class Hypervisor(Struct):
     path: FilePath
-    parameters: Sequence[str] | None = None
+    parameters: Sequence[str] | Unset = UNSET
 
 
 class Kernel(Struct):
     path: FilePath
-    parameters: Sequence[str] | None = None
-    initrd: FilePath | None = None
+    parameters: Sequence[str] | Unset = UNSET
+    initrd: FilePath | Unset = UNSET
 
 
 class Vm(Struct):
@@ -29,5 +29,5 @@ class Vm(Struct):
     """
 
     kernel: Kernel
-    hypervisor: Hypervisor | None = None
-    image: Image | None = None
+    hypervisor: Hypervisor | Unset = UNSET
+    image: Image | Unset = UNSET

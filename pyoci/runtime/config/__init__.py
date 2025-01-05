@@ -1,10 +1,11 @@
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
+from msgspec import UNSET, Struct
+from msgspec import UnsetType as Unset
+
 from pyoci.base_types import Annotations
 from pyoci.runtime import __oci_version__
-
-from pyoci.common import Struct, const_field
 from pyoci.runtime.config.filesystem import Mount, Root
 from pyoci.runtime.config.hooks import Hooks
 from pyoci.runtime.config.platform.linux import Linux
@@ -15,21 +16,20 @@ from pyoci.runtime.config.platform.zos import Zos
 from pyoci.runtime.config.process import Process
 
 
-@const_field("ociVersion", __oci_version__)
 class Container(Struct):
     if not TYPE_CHECKING:
-        ociVersion: str
+        ociVersion: str = __oci_version__
 
-    hooks: Hooks | None = None
-    annotations: Annotations | None = None
-    hostname: str | None = None
-    domainname: str | None = None
-    mounts: Sequence[Mount] | None = None
-    root: Root | None = None
-    process: Process | None = None
+    hooks: Hooks | Unset = UNSET
+    annotations: Annotations | Unset = UNSET
+    hostname: str | Unset = UNSET
+    domainname: str | Unset = UNSET
+    mounts: Sequence[Mount] | Unset = UNSET
+    root: Root | Unset = UNSET
+    process: Process | Unset = UNSET
 
-    linux: Linux | None = None
-    solaris: Solaris | None = None
-    windows: Windows | None = None
-    vm: Vm | None = None
-    zos: Zos | None = None
+    linux: Linux | Unset = UNSET
+    solaris: Solaris | Unset = UNSET
+    windows: Windows | Unset = UNSET
+    vm: Vm | Unset = UNSET
+    zos: Zos | Unset = UNSET

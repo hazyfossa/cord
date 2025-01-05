@@ -3,7 +3,7 @@ from typing import Annotated, Literal
 
 from msgspec import Meta, field
 
-from pyoci.common import Struct
+from pyoci.common import Struct, Unset, UNSET
 from pyoci.base_types import GID, UID, Int32, Uint32, Uint64
 
 Umask = Uint32
@@ -22,7 +22,7 @@ class IoPriority(Struct):
         "IOPRIO_CLASS_IDLE",
     ] = field(name="class")
 
-    priority: Int32 | None = None
+    priority: Int32 | Unset = UNSET
 
 
 class ConsoleSize(Struct):
@@ -31,8 +31,8 @@ class ConsoleSize(Struct):
 
 
 class ExecCPUAffinity(Struct):
-    initial: Annotated[str, Meta(pattern="^[0-9, -]*$")] | None = None
-    final: Annotated[str, Meta(pattern="^[0-9, -]*$")] | None = None
+    initial: Annotated[str, Meta(pattern="^[0-9, -]*$")] | Unset = UNSET
+    final: Annotated[str, Meta(pattern="^[0-9, -]*$")] | Unset = UNSET
 
 
 class User(Struct):
@@ -40,11 +40,11 @@ class User(Struct):
     https://github.com/opencontainers/runtime-spec/blob/main/config.md#user
     """
 
-    uid: UID | None = None
-    gid: GID | None = None
-    umask: Umask | None = None
-    additionalGids: Sequence[GID] | None = None
-    username: str | None = None
+    uid: UID | Unset = UNSET
+    gid: GID | Unset = UNSET
+    umask: Umask | Unset = UNSET
+    additionalGids: Sequence[GID] | Unset = UNSET
+    username: str | Unset = UNSET
 
 
 Env = Sequence[str]
@@ -55,11 +55,11 @@ Capability = Annotated[
 
 
 class Capabilities(Struct):
-    bounding: Sequence[Capability] | None = None
-    permitted: Sequence[Capability] | None = None
-    effective: Sequence[Capability] | None = None
-    inheritable: Sequence[Capability] | None = None
-    ambient: Sequence[Capability] | None = None
+    bounding: Sequence[Capability] | Unset = UNSET
+    permitted: Sequence[Capability] | Unset = UNSET
+    effective: Sequence[Capability] | Unset = UNSET
+    inheritable: Sequence[Capability] | Unset = UNSET
+    ambient: Sequence[Capability] | Unset = UNSET
 
 
 SchedulerPolicy = Literal[
@@ -85,12 +85,12 @@ SchedulerFlag = Literal[
 
 class Scheduler(Struct):
     policy: SchedulerPolicy
-    nice: Int32 | None = None
-    priority: Int32 | None = None
-    flags: Sequence[SchedulerFlag] | None = None
-    runtime: Uint64 | None = None
-    deadline: Uint64 | None = None
-    period: Uint64 | None = None
+    nice: Int32 | Unset = UNSET
+    priority: Int32 | Unset = UNSET
+    flags: Sequence[SchedulerFlag] | Unset = UNSET
+    runtime: Uint64 | Unset = UNSET
+    deadline: Uint64 | Unset = UNSET
+    period: Uint64 | Unset = UNSET
 
 
 class Process(Struct):
@@ -99,18 +99,18 @@ class Process(Struct):
     """
 
     cwd: str
-    args: Sequence[str] | None = None
-    commandLine: str | None = None
-    consoleSize: ConsoleSize | None = None
-    env: Env | None = None
-    terminal: bool | None = None
-    user: User | None = None
-    capabilities: Capabilities | None = None
-    apparmorProfile: str | None = None
-    oomScoreAdj: int | None = None
-    selinuxLabel: str | None = None
-    ioPriority: IoPriority | None = None
-    noNewPrivileges: bool | None = None
-    scheduler: Scheduler | None = None
-    rlimits: Sequence[Rlimit] | None = None
-    execCPUAffinity: ExecCPUAffinity | None = None
+    args: Sequence[str] | Unset = UNSET
+    commandLine: str | Unset = UNSET
+    consoleSize: ConsoleSize | Unset = UNSET
+    env: Env | Unset = UNSET
+    terminal: bool | Unset = UNSET
+    user: User | Unset = UNSET
+    capabilities: Capabilities | Unset = UNSET
+    apparmorProfile: str | Unset = UNSET
+    oomScoreAdj: int | Unset = UNSET
+    selinuxLabel: str | Unset = UNSET
+    ioPriority: IoPriority | Unset = UNSET
+    noNewPrivileges: bool | Unset = UNSET
+    scheduler: Scheduler | Unset = UNSET
+    rlimits: Sequence[Rlimit] | Unset = UNSET
+    execCPUAffinity: ExecCPUAffinity | Unset = UNSET

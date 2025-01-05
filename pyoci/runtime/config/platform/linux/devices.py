@@ -3,7 +3,7 @@ from typing import Annotated
 
 from msgspec import Meta
 
-from pyoci.common import Struct
+from pyoci.common import Struct, Unset, UNSET
 from pyoci.base_types import GID
 from pyoci.runtime.config.filesystem import FilePath
 from pyoci.base_types import UID, Int64, Uint16, Uint64
@@ -25,19 +25,19 @@ FileType = Annotated[
 class Device(Struct):
     type: FileType
     path: FilePath
-    fileMode: FileMode | None = None
-    major: Major | None = None
-    minor: Minor | None = None
-    uid: UID | None = None
-    gid: GID | None = None
+    fileMode: FileMode | Unset = UNSET
+    major: Major | Unset = UNSET
+    minor: Minor | Unset = UNSET
+    uid: UID | Unset = UNSET
+    gid: GID | Unset = UNSET
 
 
 class DeviceCgroup(Struct):
     allow: bool
-    type: str | None = None
-    major: Major | None = None
-    minor: Minor | None = None
-    access: str | None = None
+    type: str | Unset = UNSET
+    major: Major | Unset = UNSET
+    minor: Minor | Unset = UNSET
+    access: str | Unset = UNSET
 
 
 class BlockIODevice(Struct):
@@ -46,22 +46,22 @@ class BlockIODevice(Struct):
 
 
 class BlockIODeviceThrottle(BlockIODevice):
-    rate: Uint64 | None = None
+    rate: Uint64 | Unset = UNSET
 
 
 Weight = Uint16
 
 
 class BlockIODeviceWeight(BlockIODevice):
-    weight: Weight | None = None
-    leafWeight: Weight | None = None
+    weight: Weight | Unset = UNSET
+    leafWeight: Weight | Unset = UNSET
 
 
 class BlockIO(Struct):
-    weight: Weight | None = None
-    leafWeight: Weight | None = None
-    throttleReadBpsDevice: Sequence[BlockIODeviceThrottle] | None = None
-    throttleWriteBpsDevice: Sequence[BlockIODeviceThrottle] | None = None
-    throttleReadIOPSDevice: Sequence[BlockIODeviceThrottle] | None = None
-    throttleWriteIOPSDevice: Sequence[BlockIODeviceThrottle] | None = None
-    weightDevice: Sequence[BlockIODeviceWeight] | None = None
+    weight: Weight | Unset = UNSET
+    leafWeight: Weight | Unset = UNSET
+    throttleReadBpsDevice: Sequence[BlockIODeviceThrottle] | Unset = UNSET
+    throttleWriteBpsDevice: Sequence[BlockIODeviceThrottle] | Unset = UNSET
+    throttleReadIOPSDevice: Sequence[BlockIODeviceThrottle] | Unset = UNSET
+    throttleWriteIOPSDevice: Sequence[BlockIODeviceThrottle] | Unset = UNSET
+    weightDevice: Sequence[BlockIODeviceWeight] | Unset = UNSET

@@ -1,21 +1,21 @@
 from collections.abc import Sequence
 
-from pyoci.common import Struct
+from pyoci.common import Struct, Unset, UNSET
 from pyoci.runtime.config.platform.linux.main import NamespaceType
 from pyoci.runtime.config.platform.linux.seccomp import SeccompFeature
 from pyoci.runtime.config.process import Capability
 
 
 class Cgroup(Struct):
-    v1: bool | None = None
-    v2: bool | None = None
-    systemd: bool | None = None
-    systemdUser: bool | None = None
-    rdma: bool | None = None
+    v1: bool | Unset = UNSET
+    v2: bool | Unset = UNSET
+    systemd: bool | Unset = UNSET
+    systemdUser: bool | Unset = UNSET
+    rdma: bool | Unset = UNSET
 
 
 class Feature(Struct):
-    enabled: bool | None = None
+    enabled: bool | Unset = UNSET
 
 
 Apparmor = Feature
@@ -25,7 +25,7 @@ Idmap = Feature
 
 
 class MountExtensions(Struct):
-    idmap: Idmap | None = None
+    idmap: Idmap | Unset = UNSET
 
 
 class LinuxFeatures(Struct):
@@ -33,11 +33,11 @@ class LinuxFeatures(Struct):
     https://github.com/opencontainers/runtime-spec/blob/main/features-linux.md
     """
 
-    namespaces: Sequence[NamespaceType] | None = None
-    capabilities: Sequence[Capability] | None = None
-    cgroup: Cgroup | None = None
-    seccomp: SeccompFeature | None = None
-    apparmor: Apparmor | None = None
-    selinux: Selinux | None = None
-    intelRdt: IntelRdt | None = None
-    mountExtensions: MountExtensions | None = None
+    namespaces: Sequence[NamespaceType] | Unset = UNSET
+    capabilities: Sequence[Capability] | Unset = UNSET
+    cgroup: Cgroup | Unset = UNSET
+    seccomp: SeccompFeature | Unset = UNSET
+    apparmor: Apparmor | Unset = UNSET
+    selinux: Selinux | Unset = UNSET
+    intelRdt: IntelRdt | Unset = UNSET
+    mountExtensions: MountExtensions | Unset = UNSET

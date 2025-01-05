@@ -2,7 +2,7 @@ from collections.abc import Sequence
 from typing import Literal
 
 from pyoci.base_types import Uint32, Uint64
-from pyoci.common import Struct
+from pyoci.common import Struct, Unset, UNSET
 
 SeccompOperators = Literal[
     "SCMP_CMP_NE",
@@ -60,30 +60,30 @@ class SyscallArg(Struct):
     index: Uint32
     value: Uint64
     op: SeccompOperators
-    valueTwo: Uint64 | None = None
+    valueTwo: Uint64 | Unset = UNSET
 
 
 class Syscall(Struct):
     names: Sequence[str]
     action: SeccompAction
-    errnoRet: Uint32 | None = None
-    args: Sequence[SyscallArg] | None = None
+    errnoRet: Uint32 | Unset = UNSET
+    args: Sequence[SyscallArg] | Unset = UNSET
 
 
 class Seccomp(Struct):
     defaultAction: SeccompAction
-    defaultErrnoRet: Uint32 | None = None
-    flags: Sequence[SeccompFlag] | None = None
-    listenerPath: str | None = None
-    listenerMetadata: str | None = None
-    architectures: Sequence[SeccompArch] | None = None
-    syscalls: Sequence[Syscall] | None = None
+    defaultErrnoRet: Uint32 | Unset = UNSET
+    flags: Sequence[SeccompFlag] | Unset = UNSET
+    listenerPath: str | Unset = UNSET
+    listenerMetadata: str | Unset = UNSET
+    architectures: Sequence[SeccompArch] | Unset = UNSET
+    syscalls: Sequence[Syscall] | Unset = UNSET
 
 
 class SeccompFeature(Struct):
-    enabled: bool | None = None
-    actions: Sequence[SeccompAction] | None = None
-    operators: Sequence[SeccompOperators] | None = None
-    archs: Sequence[SeccompArch] | None = None
-    knownFlags: Sequence[SeccompFlag] | None = None
-    supportedFlags: Sequence[SeccompFlag] | None = None
+    enabled: bool | Unset = UNSET
+    actions: Sequence[SeccompAction] | Unset = UNSET
+    operators: Sequence[SeccompOperators] | Unset = UNSET
+    archs: Sequence[SeccompArch] | Unset = UNSET
+    knownFlags: Sequence[SeccompFlag] | Unset = UNSET
+    supportedFlags: Sequence[SeccompFlag] | Unset = UNSET

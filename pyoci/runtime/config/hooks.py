@@ -3,16 +3,16 @@ from typing import Annotated
 
 from msgspec import Meta
 
-from pyoci.common import Struct
+from pyoci.common import Struct, Unset, UNSET
 from pyoci.runtime.config.filesystem import FilePath
 from pyoci.runtime.config.process import Env
 
 
 class Hook(Struct):
     path: FilePath
-    args: Sequence[str] | None = None
-    env: Env | None = None
-    timeout: Annotated[int, Meta(ge=1)] | None = None
+    args: Sequence[str] | Unset = UNSET
+    env: Env | Unset = UNSET
+    timeout: Annotated[int, Meta(ge=1)] | Unset = UNSET
 
 
 class Hooks(Struct):
@@ -20,9 +20,9 @@ class Hooks(Struct):
     https://github.com/opencontainers/runtime-spec/blob/main/config.md#posix-platform-hooks
     """
 
-    prestart: Sequence[Hook] | None = None
-    createRuntime: Sequence[Hook] | None = None
-    createContainer: Sequence[Hook] | None = None
-    startContainer: Sequence[Hook] | None = None
-    poststart: Sequence[Hook] | None = None
-    poststop: Sequence[Hook] | None = None
+    prestart: Sequence[Hook] | Unset = UNSET
+    createRuntime: Sequence[Hook] | Unset = UNSET
+    createContainer: Sequence[Hook] | Unset = UNSET
+    startContainer: Sequence[Hook] | Unset = UNSET
+    poststart: Sequence[Hook] | Unset = UNSET
+    poststop: Sequence[Hook] | Unset = UNSET

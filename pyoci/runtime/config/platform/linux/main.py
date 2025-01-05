@@ -4,28 +4,28 @@ from typing import Annotated, Literal
 from msgspec import Meta
 
 from pyoci.base_types import Int64, Uint32, Uint64
-from pyoci.common import Struct
+from pyoci.common import Struct, Unset, UNSET
 from pyoci.runtime.config.filesystem import FilePath, IDMapping
 from pyoci.runtime.config.platform.linux.devices import BlockIO, Device, DeviceCgroup
 from pyoci.runtime.config.platform.linux.seccomp import Seccomp
 
 
 class TimeOffsets(Struct):
-    secs: Int64 | None = None
-    nanosecs: Uint32 | None = None
+    secs: Int64 | Unset = UNSET
+    nanosecs: Uint32 | Unset = UNSET
 
 
 class PlatformTimeOffsets(Struct):
-    boottime: TimeOffsets | None = None
-    monotonic: TimeOffsets | None = None
+    boottime: TimeOffsets | Unset = UNSET
+    monotonic: TimeOffsets | Unset = UNSET
 
 
 class IntelRdt(Struct):
-    closID: str | None = None
-    l3CacheSchema: str | None = None
-    memBwSchema: Annotated[str, Meta(pattern="^MB:[^\\n]*$")] | None = None
-    enableCMT: bool | None = None
-    enableMBM: bool | None = None
+    closID: str | Unset = UNSET
+    l3CacheSchema: str | Unset = UNSET
+    memBwSchema: Annotated[str, Meta(pattern="^MB:[^\\n]*$")] | Unset = UNSET
+    enableCMT: bool | Unset = UNSET
+    enableMBM: bool | Unset = UNSET
 
 
 class NetworkInterfacePriority(Struct):
@@ -34,20 +34,20 @@ class NetworkInterfacePriority(Struct):
 
 
 class Network(Struct):
-    classID: Uint32 | None = None
-    priorities: Sequence[NetworkInterfacePriority] | None = None
+    classID: Uint32 | Unset = UNSET
+    priorities: Sequence[NetworkInterfacePriority] | Unset = UNSET
 
 
 class Memory(Struct):
-    kernel: Int64 | None = None
-    kernelTCP: Int64 | None = None
-    limit: Int64 | None = None
-    reservation: Int64 | None = None
-    swap: Int64 | None = None
-    swappiness: Uint64 | None = None
-    disableOOMKiller: bool | None = None
-    useHierarchy: bool | None = None
-    checkBeforeUpdate: bool | None = None
+    kernel: Int64 | Unset = UNSET
+    kernelTCP: Int64 | Unset = UNSET
+    limit: Int64 | Unset = UNSET
+    reservation: Int64 | Unset = UNSET
+    swap: Int64 | Unset = UNSET
+    swappiness: Uint64 | Unset = UNSET
+    disableOOMKiller: bool | Unset = UNSET
+    useHierarchy: bool | Unset = UNSET
+    checkBeforeUpdate: bool | Unset = UNSET
 
 
 class HugepageLimit(Struct):
@@ -56,20 +56,20 @@ class HugepageLimit(Struct):
 
 
 class Cpu(Struct):
-    cpus: str | None = None
-    mems: str | None = None
-    period: Uint64 | None = None
-    quota: Int64 | None = None
-    burst: Uint64 | None = None
-    realtimePeriod: Uint64 | None = None
-    realtimeRuntime: Int64 | None = None
-    shares: Uint64 | None = None
-    idle: Int64 | None = None
+    cpus: str | Unset = UNSET
+    mems: str | Unset = UNSET
+    period: Uint64 | Unset = UNSET
+    quota: Int64 | Unset = UNSET
+    burst: Uint64 | Unset = UNSET
+    realtimePeriod: Uint64 | Unset = UNSET
+    realtimeRuntime: Int64 | Unset = UNSET
+    shares: Uint64 | Unset = UNSET
+    idle: Int64 | Unset = UNSET
 
 
 class Rdma(Struct):
-    hcaHandles: Uint32 | None = None
-    hcaObjects: Uint32 | None = None
+    hcaHandles: Uint32 | Unset = UNSET
+    hcaObjects: Uint32 | Unset = UNSET
 
 
 class Pids(Struct):
@@ -77,15 +77,15 @@ class Pids(Struct):
 
 
 class Resources(Struct):
-    unified: Mapping[str, str] | None = None
-    devices: Sequence[DeviceCgroup] | None = None
-    pids: Pids | None = None
-    blockIO: BlockIO | None = None
-    cpu: Cpu | None = None
-    hugepageLimits: Sequence[HugepageLimit] | None = None
-    memory: Memory | None = None
-    network: Network | None = None
-    rdma: Mapping[str, Rdma] | None = None
+    unified: Mapping[str, str] | Unset = UNSET
+    devices: Sequence[DeviceCgroup] | Unset = UNSET
+    pids: Pids | Unset = UNSET
+    blockIO: BlockIO | Unset = UNSET
+    cpu: Cpu | Unset = UNSET
+    hugepageLimits: Sequence[HugepageLimit] | Unset = UNSET
+    memory: Memory | Unset = UNSET
+    network: Network | Unset = UNSET
+    rdma: Mapping[str, Rdma] | Unset = UNSET
 
 
 NamespaceType = Literal[
@@ -95,15 +95,15 @@ NamespaceType = Literal[
 
 class NamespaceReference(Struct):
     type: NamespaceType
-    path: FilePath | None = None
+    path: FilePath | Unset = UNSET
 
 
 RootfsPropagation = Literal["private", "shared", "slave", "unbindable"]
 
 
 class Personality(Struct):
-    domain: Literal["LINUX", "LINUX32"] | None = None
-    flags: Sequence[str] | None = None
+    domain: Literal["LINUX", "LINUX32"] | Unset = UNSET
+    flags: Sequence[str] | Unset = UNSET
 
 
 class Linux(Struct):
@@ -111,18 +111,18 @@ class Linux(Struct):
     https://github.com/opencontainers/runtime-spec/blob/main/config-linux.md
     """
 
-    devices: Sequence[Device] | None = None
-    uidMappings: Sequence[IDMapping] | None = None
-    gidMappings: Sequence[IDMapping] | None = None
-    namespaces: Sequence[NamespaceReference] | None = None
-    resources: Resources | None = None
-    cgroupsPath: str | None = None
-    rootfsPropagation: RootfsPropagation | None = None
-    seccomp: Seccomp | None = None
-    sysctl: Mapping[str, str] | None = None
-    maskedPaths: Sequence[str] | None = None
-    readonlyPaths: Sequence[str] | None = None
-    mountLabel: str | None = None
-    intelRdt: IntelRdt | None = None
-    personality: Personality | None = None
-    timeOffsets: PlatformTimeOffsets | None = None
+    devices: Sequence[Device] | Unset = UNSET
+    uidMappings: Sequence[IDMapping] | Unset = UNSET
+    gidMappings: Sequence[IDMapping] | Unset = UNSET
+    namespaces: Sequence[NamespaceReference] | Unset = UNSET
+    resources: Resources | Unset = UNSET
+    cgroupsPath: str | Unset = UNSET
+    rootfsPropagation: RootfsPropagation | Unset = UNSET
+    seccomp: Seccomp | Unset = UNSET
+    sysctl: Mapping[str, str] | Unset = UNSET
+    maskedPaths: Sequence[str] | Unset = UNSET
+    readonlyPaths: Sequence[str] | Unset = UNSET
+    mountLabel: str | Unset = UNSET
+    intelRdt: IntelRdt | Unset = UNSET
+    personality: Personality | Unset = UNSET
+    timeOffsets: PlatformTimeOffsets | Unset = UNSET

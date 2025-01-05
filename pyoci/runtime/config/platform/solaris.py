@@ -1,25 +1,25 @@
 from collections.abc import Sequence
 
-from pyoci.common import Struct
+from pyoci.common import Struct, Unset, UNSET
 
 
 class AnetItem(Struct):
-    linkname: str | None = None
-    lowerLink: str | None = None
-    allowedAddress: str | None = None
-    configureAllowedAddress: str | None = None
-    defrouter: str | None = None
-    macAddress: str | None = None
-    linkProtection: str | None = None
+    linkname: str | Unset = UNSET
+    lowerLink: str | Unset = UNSET
+    allowedAddress: str | Unset = UNSET
+    configureAllowedAddress: str | Unset = UNSET
+    defrouter: str | Unset = UNSET
+    macAddress: str | Unset = UNSET
+    linkProtection: str | Unset = UNSET
 
 
 class CappedMemory(Struct):
-    physical: str | None = None
-    swap: str | None = None
+    physical: str | Unset = UNSET
+    swap: str | Unset = UNSET
 
 
 class CappedCPU(Struct):
-    ncpus: str | None = None
+    ncpus: str | Unset = UNSET
 
 
 class Solaris(Struct):
@@ -27,9 +27,9 @@ class Solaris(Struct):
     https://github.com/opencontainers/runtime-spec/blob/main/config-solaris.md
     """
 
-    milestone: str | None = None
-    limitpriv: str | None = None
-    maxShmMemory: str | None = None
-    cappedCPU: CappedCPU | None = None
-    cappedMemory: CappedMemory | None = None
-    anet: Sequence[AnetItem] | None = None
+    milestone: str | Unset = UNSET
+    limitpriv: str | Unset = UNSET
+    maxShmMemory: str | Unset = UNSET
+    cappedCPU: CappedCPU | Unset = UNSET
+    cappedMemory: CappedMemory | Unset = UNSET
+    anet: Sequence[AnetItem] | Unset = UNSET

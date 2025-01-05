@@ -3,19 +3,19 @@ from typing import TYPE_CHECKING, Annotated, Literal
 from msgspec import Meta
 
 from pyoci.base_types import Annotations
-from pyoci.common import Struct, const_field
+from pyoci.common import Struct, Unset, UNSET
 from pyoci.runtime import __oci_version__
 
 Status = Literal["creating", "created", "running", "stopped"]
 
 
-@const_field("ociVersion", __oci_version__)
 class State(Struct):
-    if not TYPE_CHECKING:
-        ociVersion: str
-
     id: str
     status: Status
     bundle: str
-    pid: Annotated[int, Meta(ge=0)] | None = None
-    annotations: Annotations | None = None
+
+    if not TYPE_CHECKING:
+        ociVersion: str = __oci_version__
+
+    pid: Annotated[int, Meta(ge=0)] | Unset = UNSET
+    annotations: Annotations | Unset = UNSET
