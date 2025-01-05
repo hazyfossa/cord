@@ -6,18 +6,19 @@ import msgspec
 
 class LogEntry(msgspec.Struct):  # not pyoci.common.Struct, as all fileds are required
     level: Literal["debug", "info", "warn", "error"]
-    message: str
+    message: str = msgspec.field(name="msg")
     time: str  # Do we need datetime parsing here?
+
+
+decoder = msgspec.json.Decoder(LogEntry)
 
 
 def handle(result: CompletedProcess, **kwargs):
     if result.returncode == 0:
         return
 
-    log = msgspec.json.decode(result.stderr, type=list[LogEntry])
+    log = decoder.decode_lines(result.stderr)
 
     for entry in log:
-        if entry.level == "error":
-            match entry.message:
-                case "container does not exist":
-                    raise ValueError("Container {id} does not exist".format(**locals()))
+        if entry.level == "error":  # TODO: Do we always see at-most one error?
+            raise RuntimeError(entry.message)

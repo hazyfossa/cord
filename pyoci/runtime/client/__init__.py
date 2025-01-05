@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from subprocess import run, PIPE
+from subprocess import run
 from typing import Any, Literal
 
 from msgspec import json
@@ -22,27 +22,12 @@ class Runc:
         handle_errors: bool = True,
         debug: bool | None = default(False),  # = False
         log: str | None = default("/dev/stderr"),  # = "/dev/stderr"
-        log_format: str | None = default("text"),  # = "text"
+        log_format: Literal["text", "json"] | None = default("text"),  # = "text"
         root: str | None = default("/run/user/1000//runc"),  # = "/run/user/1000//runc"
         systemd_cgroup: bool | None = default(False),  # = False
         rootless: bool | Literal["auto"] | None = default("auto"),  # = "auto"
     ):
         path = str(path)
-
-        self.__global_args__ = (
-            CLIArguments()
-            / flag("--debug")
-            / option("--log")
-            / option("--log-format")
-            / option("--root")
-            / flag("--systemd-cgroup")
-            / option("--rootless")(str(rootless).lower())
-        ).list
-
-        self._run = lambda *args: run(
-            [path, *self.__global_args__, *args],
-            capture_output=True,
-        )
 
         if handle_errors:
             if log or log_format:
@@ -52,12 +37,35 @@ class Runc:
 
             log_format = "json"
 
+        self.__global_args__ = (
+            CLIArguments()
+            / flag("--debug")(debug)
+            / option("--log")(log)
+            / option("--log-format")(log_format)
+            / option("--root")(root)
+            / flag("--systemd-cgroup")(systemd_cgroup)
+            / option("--rootless")(
+                str(rootless).lower() if rootless is not None else None
+            )
+        ).list
+
+        def _run(*args):
+            return run(
+                [path, *self.__global_args__, *args],
+                executable=path,
+                capture_output=True,
+            )
+
+        if handle_errors:
+
             def run_with_error_handling(*args):
-                result = self._run(*args)
+                result = _run(*args)
                 errors.handle(result)
                 return result
 
             self._run = run_with_error_handling
+        else:
+            self._run = _run
 
     def create(
         self,
@@ -71,15 +79,15 @@ class Runc:
     ):
         args = (
             CLIArguments()
-            / option("--bundle")
-            / option("--console-socket")
-            / option("--pid-file")
-            / flag("--no-pivot")
-            / flag("--no-new-keyring")
-            / option("--preserve-fds")
+            / option("--bundle")(bundle)
+            / option("--console-socket")(console_socket)
+            / option("--pid-file")(pid_file)
+            / flag("--no-pivot")(no_pivot)
+            / flag("--no-new-keyring")(no_new_keyring)
+            / option("--preserve-fds")(preserve_fds)
         )
 
-        self._run("create", id, *args.list)
+        self._run("create", *args.list, id)
 
     def exec(
         self,
@@ -114,27 +122,27 @@ class Runc:
 
         args = (
             CLIArguments()
-            / option("--console-socket")
-            / option("--cwd")
-            / flag("--tty")
-            / option("--user")
-            / option("--additional-gids")
-            / option("--process")
-            / flag("--detach")
-            / option("--pid-file")
-            / option("--process-label")
-            / option("--apparmor")
-            / flag("--no-new-privs")
-            / option("--cap")
-            / option("--preserve-fds")
-            / option("--cgroup")
-            / flag("--ignore-paused")
+            / option("--console-socket")(console_socket)
+            / option("--cwd")(cwd)
+            / flag("--tty")(tty)
+            / option("--user")(user)
+            / option("--additional-gids")(additional_gids)
+            / option("--process")(process)
+            / flag("--detach")(detach)
+            / option("--pid-file")(pid_file)
+            / option("--process-label")(process_label)
+            / option("--apparmor")(apparmor)
+            / flag("--no-new-privs")(no_new_privs)
+            / option("--cap")(cap)
+            / option("--preserve-fds")(preserve_fds)
+            / option("--cgroup")(cgroup)
+            / flag("--ignore-paused")(ignore_paused)
         )
 
         self._run("exec", id, *args.list, *env_args)
 
     def list(self) -> list[State]:
-        result = self._run(["list", "--format json"])
+        result = self._run(["list", "--format=json"])
         return json.decode(result.stdout, type=list[State])
 
     def state(self, id: str):
@@ -148,7 +156,7 @@ class Runc:
         self._run("stop", id)
 
     def delete(self, id: str, force: bool | None = None):
-        args = CLIArguments() / flag("--force")
+        args = CLIArguments() / flag("--force")(force)
         self._run("delete", id, *args.list)
 
 
