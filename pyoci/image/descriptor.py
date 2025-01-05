@@ -6,6 +6,7 @@ from msgspec import Meta
 from pyoci.base_types import Annotations, Data, Int64
 from pyoci.common import Struct
 from pyoci.image.digest import Digest
+from pyoci.image.platform import Platform
 
 MediaType = Annotated[
     str,
@@ -16,6 +17,10 @@ MediaType = Annotated[
 
 
 class ContentDescriptor(Struct):
+    """
+    https://github.com/opencontainers/image-spec/blob/v1.1.0/descriptor.md
+    """
+
     mediaType: MediaType
     size: Int64  # in bytes
     digest: Digest
@@ -24,3 +29,7 @@ class ContentDescriptor(Struct):
     data: Data | None = None
     artifactType: MediaType | None = None
     annotations: Annotations | None = None
+
+
+class ManifestDescriptor(ContentDescriptor):
+    platform: Platform | None = None

@@ -18,73 +18,25 @@ class MediaType(StrEnum):
     layer_zstd = f"{_type_oci}.image.layer.v1.tar+zstd"
 
 
+def annotation(name: str) -> None:
+    return field(name=f"org.opencontainers.image.annotation.{name}", default=None)
+
+
 class ImageAnnotation(Struct):
-    created: str | None = field(
-        name="org.opencontainers.image.created",
-        default=None,
-    )
+    created: str | None = annotation("created")
+    authors: str | None = annotation("authors")
+    url: str | None = annotation("url")
+    documentation: str | None = annotation("documentation")
+    source: str | None = annotation("source")
+    version: str | None = annotation("version")
+    revision: str | None = annotation("revision")
+    vendor: str | None = annotation("vendor")
+    licenses: str | None = annotation("licenses")
+    ref_name: str | None = annotation("ref.name")
+    title: str | None = annotation("title")
+    description: str | None = annotation("description")
+    base_image_digest: str | None = annotation("base.digest")
+    base_image_name: str | None = annotation("base.name")
 
-    authors: str | None = field(
-        name="org.opencontainers.image.authors",
-        default=None,
-    )
 
-    url: str | None = field(
-        name="org.opencontainers.image.url",
-        default=None,
-    )
-
-    documentation: str | None = field(
-        name="org.opencontainers.image.documentation",
-        default=None,
-    )
-
-    source: str | None = field(
-        name="org.opencontainers.image.source",
-        default=None,
-    )
-
-    version: str | None = field(
-        name="org.opencontainers.image.version",
-        default=None,
-    )
-
-    revision: str | None = field(
-        name="org.opencontainers.image.revision",
-        default=None,
-    )
-
-    vendor: str | None = field(
-        name="org.opencontainers.image.vendor",
-        default=None,
-    )
-
-    licenses: str | None = field(
-        name="org.opencontainers.image.licenses",
-        default=None,
-    )
-
-    ref_name: str | None = field(
-        name="org.opencontainers.image.ref.name",
-        default=None,
-    )
-
-    title: str | None = field(
-        name="org.opencontainers.image.title",
-        default=None,
-    )
-
-    description: str | None = field(
-        name="org.opencontainers.image.description",
-        default=None,
-    )
-
-    base_image_digest: str | None = field(
-        name="org.opencontainers.image.base.digest",
-        default=None,
-    )
-
-    base_image_name: str | None = field(
-        name="org.opencontainers.image.base.name",
-        default=None,
-    )
+ImageAnnotation()

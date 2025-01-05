@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 from pyoci.common import Struct, const_field
-from pyoci.image.manifest import ContentDescriptor
+from pyoci.image.descriptor import ContentDescriptor, ManifestDescriptor
 from pyoci.image.descriptor import MediaType
 
 
@@ -9,7 +9,7 @@ class Index(Struct):
     if not TYPE_CHECKING:
         schemaVersion: Literal[2]
 
-    manifests: list[ContentDescriptor]
+    manifests: list[ManifestDescriptor]
 
     mediaType: MediaType | None = None
     artifactType: MediaType | None = None
