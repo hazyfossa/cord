@@ -1,68 +1,68 @@
 from pyoci.base_types import Uint64
-from pyoci.common import Struct
+from pyoci.common import Struct, Unset, UNSET
 
 
 class BlkioEntry(Struct):
-    major: Uint64 | None = None
-    minor: Uint64 | None = None
-    op: str | None = None
-    value: Uint64 | None = None
+    major: Uint64 | Unset = UNSET
+    minor: Uint64 | Unset = UNSET
+    op: str | Unset = UNSET
+    value: Uint64 | Unset = UNSET
 
 
 class Blkio(Struct):
-    ioServiceBytesRecursive: list[BlkioEntry] | None = None
-    ioServicedRecursive: list[BlkioEntry] | None = None
-    ioQueuedRecursive: list[BlkioEntry] | None = None
-    ioServiceTimeRecursive: list[BlkioEntry] | None = None
-    ioWaitTimeRecursive: list[BlkioEntry] | None = None
-    ioMergedRecursive: list[BlkioEntry] | None = None
-    ioTimeRecursive: list[BlkioEntry] | None = None
-    sectorsRecursive: list[BlkioEntry] | None = None
+    ioServiceBytesRecursive: list[BlkioEntry] | Unset = UNSET
+    ioServicedRecursive: list[BlkioEntry] | Unset = UNSET
+    ioQueuedRecursive: list[BlkioEntry] | Unset = UNSET
+    ioServiceTimeRecursive: list[BlkioEntry] | Unset = UNSET
+    ioWaitTimeRecursive: list[BlkioEntry] | Unset = UNSET
+    ioMergedRecursive: list[BlkioEntry] | Unset = UNSET
+    ioTimeRecursive: list[BlkioEntry] | Unset = UNSET
+    sectorsRecursive: list[BlkioEntry] | Unset = UNSET
 
 
 class Pids(Struct):
-    current: Uint64 | None = None
-    limit: Uint64 | None = None
+    current: Uint64 | Unset = UNSET
+    limit: Uint64 | Unset = UNSET
 
 
 class Throttling(Struct):
-    periods: Uint64 | None = None
-    throttledPeriods: Uint64 | None = None
-    throttledTime: Uint64 | None = None
+    periods: Uint64 | Unset = UNSET
+    throttledPeriods: Uint64 | Unset = UNSET
+    throttledTime: Uint64 | Unset = UNSET
 
 
 class CpuUsage(Struct):
     kernel: Uint64
     user: Uint64
-    total: Uint64 | None = None
-    percpu: list[Uint64] | None = None
+    total: Uint64 | Unset = UNSET
+    percpu: list[Uint64] | Unset = UNSET
 
 
 class Cpu(Struct):
-    usage: CpuUsage | None = None
-    throttling: Throttling | None = None
+    usage: CpuUsage | Unset = UNSET
+    throttling: Throttling | Unset = UNSET
 
 
 class MemoryEntry(Struct):
     failcnt: Uint64
     limit: Uint64
-    usage: Uint64 | None = None
-    max: Uint64 | None = None
+    usage: Uint64 | Unset = UNSET
+    max: Uint64 | Unset = UNSET
 
 
 class Memory(Struct):
-    cache: Uint64 | None = None
-    usage: MemoryEntry | None = None
-    swap: MemoryEntry | None = None
-    kernel: MemoryEntry | None = None
-    kernelTCP: MemoryEntry | None = None
-    raw: dict[str, Uint64] | None = None
+    cache: Uint64 | Unset = UNSET
+    usage: MemoryEntry | Unset = UNSET
+    swap: MemoryEntry | Unset = UNSET
+    kernel: MemoryEntry | Unset = UNSET
+    kernelTCP: MemoryEntry | Unset = UNSET
+    raw: dict[str, Uint64] | Unset = UNSET
 
 
 class Hugetlb(Struct):
     failcnt: Uint64
-    usage: Uint64 | None = None
-    max: Uint64 | None = None
+    usage: Uint64 | Unset = UNSET
+    max: Uint64 | Unset = UNSET
 
 
 class NetworkInterface(Struct):
@@ -90,4 +90,4 @@ class Stats(Struct):
 class Event(Struct):
     type: str
     id: str
-    data: Stats | None = None
+    data: Stats | Unset = UNSET

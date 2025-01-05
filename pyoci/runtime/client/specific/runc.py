@@ -2,13 +2,12 @@ from datetime import datetime
 from pathlib import Path
 
 from msgspec import field
-from pyoci.common import const_field
 from pyoci.runtime import __oci_version__
-from pyoci.runtime.client.spec.state import BaseState
+from pyoci.common import Unset, UNSET
+from pyoci.runtime.client.spec.state import State as BaseState
 
 
-@const_field("ociVersion", __oci_version__)
 class State(BaseState):
-    rootfs: str | None = None
-    created: datetime | None = None
-    owner: str | None = None
+    rootfs: str | Unset = UNSET
+    created: datetime | Unset = UNSET
+    owner: str | Unset = UNSET
