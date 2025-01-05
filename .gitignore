@@ -10,4 +10,4 @@ wheels/
 .venv
 
 # Project-specific
-/test.py
+/test*

@@ -1,12 +1,9 @@
-# Warning
-This branch (monorepo) is an ongoing transition for this repository to contain multiple sub-projects.
-As such, it isn't intended for any stable releases.
-
 # pyoci
 
 [![image](https://img.shields.io/pypi/v/pyoci.svg)](https://pypi.python.org/pypi/pyoci)
 [![image](https://img.shields.io/pypi/l/pyoci.svg)](https://pypi.python.org/pypi/pyoci)
 [![image](https://img.shields.io/pypi/pyversions/pyoci.svg)](https://pypi.python.org/pypi/pyoci)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 
 **What**: A library to define OCI [Runtime](https://github.com/opencontainers/runtime-spec) and [Image](https://github.com/opencontainers/image-spec) specification compliant container instances.
 

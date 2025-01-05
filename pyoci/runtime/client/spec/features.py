@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 
-from pyoci.common import Struct
+from pyoci.common import Struct, Unset, UNSET
 from pyoci.base_types import Annotations
 from .linux_features import LinuxFeatures
 
@@ -15,8 +15,8 @@ class Features(Struct):
 
     ociVersionMin: str
     ociVersionMax: str
-    hooks: Sequence[str] | None = None
-    mountOptions: Sequence[str] | None = None
-    annotations: Annotations | None = None
-    potentiallyUnsafeConfigAnnotations: Sequence[str] | None = None  # ?
-    linux: LinuxFeatures | None = None
+    hooks: Sequence[str] | Unset = UNSET
+    mountOptions: Sequence[str] | Unset = UNSET
+    annotations: Annotations | Unset = UNSET
+    potentiallyUnsafeConfigAnnotations: Sequence[str] | Unset = UNSET  # ?
+    linux: LinuxFeatures | Unset = UNSET

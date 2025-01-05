@@ -1,6 +1,8 @@
 from collections.abc import Sequence
 
-from pyoci.common import Struct
+from msgspec import UNSET, Struct
+from msgspec import UnsetType as Unset
+
 from pyoci.base_types import Uint32
 
 FilePath = str
@@ -8,7 +10,7 @@ FilePath = str
 
 class Root(Struct):
     path: FilePath
-    readonly: bool | None = None
+    readonly: bool | Unset = UNSET
 
 
 class IDMapping(Struct):
@@ -23,8 +25,8 @@ class Mount(Struct):
     """
 
     destination: FilePath
-    source: FilePath | None = None
-    options: Sequence[str] | None = None
-    type: str | None = None
-    uidMappings: Sequence[IDMapping] | None = None
-    gidMappings: Sequence[IDMapping] | None = None
+    source: FilePath | Unset = UNSET
+    options: Sequence[str] | Unset = UNSET
+    type: str | Unset = UNSET
+    uidMappings: Sequence[IDMapping] | Unset = UNSET
+    gidMappings: Sequence[IDMapping] | Unset = UNSET

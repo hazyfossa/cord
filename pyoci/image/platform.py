@@ -1,4 +1,4 @@
-from pyoci.common import Struct
+from pyoci.common import Struct, Unset, UNSET
 
 # TODO better integration?
 
@@ -6,6 +6,6 @@ from pyoci.common import Struct
 class Platform(Struct):
     architecture: str
     os: str
-    os_version: str | None = None
-    os_features: list[str] | None = None
-    variant: str | None = None
+    os_version: str | Unset = UNSET
+    os_features: list[str] | Unset = UNSET
+    variant: str | Unset = UNSET

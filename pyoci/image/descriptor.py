@@ -4,7 +4,7 @@ from typing import Annotated
 from msgspec import Meta
 
 from pyoci.base_types import Annotations, Data, Int64
-from pyoci.common import Struct
+from pyoci.common import Struct, Unset, UNSET
 from pyoci.image.digest import Digest
 from pyoci.image.platform import Platform
 
@@ -25,11 +25,11 @@ class ContentDescriptor(Struct):
     size: Int64  # in bytes
     digest: Digest
 
-    urls: Sequence[str] | None = None
-    data: Data | None = None
-    artifactType: MediaType | None = None
-    annotations: Annotations | None = None
+    urls: Sequence[str] | Unset = UNSET
+    data: Data | Unset = UNSET
+    artifactType: MediaType | Unset = UNSET
+    annotations: Annotations | Unset = UNSET
 
 
 class ManifestDescriptor(ContentDescriptor):
-    platform: Platform | None = None
+    platform: Platform | Unset = UNSET

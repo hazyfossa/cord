@@ -1,7 +1,7 @@
 from collections.abc import Mapping, Sequence
 from typing import Any, Literal
 
-from pyoci.common import Struct
+from pyoci.common import Struct, Unset, UNSET
 from pyoci.runtime.config.filesystem import FilePath
 from pyoci.base_types import Uint16, Uint64
 
@@ -12,37 +12,37 @@ class Device(Struct):
 
 
 class Hyperv(Struct):
-    utilityVMPath: str | None = None
+    utilityVMPath: str | Unset = UNSET
 
 
 class Network(Struct):
-    endpointList: Sequence[str] | None = None
-    allowUnqualifiedDNSQuery: bool | None = None
-    DNSSearchList: Sequence[str] | None = None
-    networkSharedContainerName: str | None = None
-    networkNamespace: str | None = None
+    endpointList: Sequence[str] | Unset = UNSET
+    allowUnqualifiedDNSQuery: bool | Unset = UNSET
+    DNSSearchList: Sequence[str] | Unset = UNSET
+    networkSharedContainerName: str | Unset = UNSET
+    networkNamespace: str | Unset = UNSET
 
 
 class Storage(Struct):
-    iops: Uint64 | None = None
-    bps: Uint64 | None = None
-    sandboxSize: Uint64 | None = None
+    iops: Uint64 | Unset = UNSET
+    bps: Uint64 | Unset = UNSET
+    sandboxSize: Uint64 | Unset = UNSET
 
 
 class Cpu(Struct):
-    count: Uint64 | None = None
-    shares: Uint16 | None = None
-    maximum: Uint16 | None = None
+    count: Uint64 | Unset = UNSET
+    shares: Uint16 | Unset = UNSET
+    maximum: Uint16 | Unset = UNSET
 
 
 class Memory(Struct):
-    limit: Uint64 | None = None
+    limit: Uint64 | Unset = UNSET
 
 
 class Resources(Struct):
-    memory: Memory | None = None
-    cpu: Cpu | None = None
-    storage: Storage | None = None
+    memory: Memory | Unset = UNSET
+    cpu: Cpu | Unset = UNSET
+    storage: Storage | Unset = UNSET
 
 
 class Windows(Struct):
@@ -51,10 +51,10 @@ class Windows(Struct):
     """
 
     layerFolders: Sequence[FilePath]
-    devices: Sequence[Device] | None = None
-    resources: Resources | None = None
-    network: Network | None = None
-    credentialSpec: Mapping[str, Any] | None = None
-    servicing: bool | None = None
-    ignoreFlushesDuringBoot: bool | None = None
-    hyperv: Hyperv | None = None
+    devices: Sequence[Device] | Unset = UNSET
+    resources: Resources | Unset = UNSET
+    network: Network | Unset = UNSET
+    credentialSpec: Mapping[str, Any] | Unset = UNSET
+    servicing: bool | Unset = UNSET
+    ignoreFlushesDuringBoot: bool | Unset = UNSET
+    hyperv: Hyperv | Unset = UNSET

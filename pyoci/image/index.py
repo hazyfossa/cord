@@ -1,17 +1,16 @@
 from typing import TYPE_CHECKING
-from pyoci.common import Struct, const_field
+from pyoci.common import Struct, Unset, UNSET
 from pyoci.image.descriptor import ContentDescriptor, ManifestDescriptor
 from pyoci.image.descriptor import MediaType
 
 
-@const_field("schemaVersion", 2)
 class Index(Struct):
-    if not TYPE_CHECKING:
-        schemaVersion: Literal[2]
-
     manifests: list[ManifestDescriptor]
 
-    mediaType: MediaType | None = None
-    artifactType: MediaType | None = None
-    subject: ContentDescriptor | None = None
-    annotations: dict[str, str] | None = None
+    if not TYPE_CHECKING:
+        schemaVersion: Literal[2] = 2
+
+    mediaType: MediaType | Unset = UNSET
+    artifactType: MediaType | Unset = UNSET
+    subject: ContentDescriptor | Unset = UNSET
+    annotations: dict[str, str] | Unset = UNSET
