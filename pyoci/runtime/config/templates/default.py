@@ -1,9 +1,31 @@
-from pyoci.runtime.config import Container
-from pyoci.runtime.config.platform.linux import Namespace
-from pyoci.runtime.config.platform.linux.devices import DeviceCgroup
-from pyoci.runtime.config.process import Capabilities, Process, Rlimit
-from pyoci.runtime.config.filesystem import Mount
+from collections.abc import Sequence
+from typing import Any
 
+from pyoci.common import Struct, Unset
+from pyoci.runtime.config import Container as BaseContainer
+from pyoci.runtime.config.filesystem import Mount, Root
+from pyoci.runtime.config.platform.linux import (
+    Linux as BaseLinux,
+)
+from pyoci.runtime.config.platform.linux import (
+    Namespace,
+    RootfsPropagation,
+)
+from pyoci.runtime.config.platform.linux import (
+    Resources as BaseResources,
+)
+from pyoci.runtime.config.platform.linux.devices import DeviceCgroup
+from pyoci.runtime.config.platform.linux.seccomp import Seccomp
+from pyoci.runtime.config.process import (
+    Capabilities,
+    Rlimit,
+    User,
+)
+from pyoci.runtime.config.process import (
+    Process as BaseProcess,
+)
+
+# TODO: consider merging with relevant files, or even replacing defaults in base structs with these
 
 mounts = [
     Mount(
@@ -118,3 +140,38 @@ readonly_paths = [
 devices = [
     DeviceCgroup(allow=False, access="rwm"),
 ]
+
+root_user = User(uid=0, gid=0)
+
+env_path = "/usr/local/bin:/usr/bin:/bin"  # TODO
+
+
+class Process(BaseProcess, Struct):
+    cwd: str = "/"
+    user: User | Unset = root_user
+    noNewPrivileges: bool | Unset = True
+
+    def __post_init__(self):
+        self.env = (self.env or []) + [f"PATH={env_path}"]
+
+        if self.terminal:
+            self.env.append("TERM=xterm")
+
+
+class Resources(BaseResources, Struct):
+    devices: Sequence[DeviceCgroup] | Unset = devices
+
+
+class Linux(BaseLinux, Struct):
+    namespaces: Sequence[Namespace] | Unset = namespaces
+    rootfsPropagation: RootfsPropagation | Unset = "private"
+    maskedPaths: Sequence[str] | Unset = masked_paths
+    readonlyPaths: Sequence[str] | Unset = readonly_paths
+    resources: BaseResources | Unset = Resources()
+
+
+class Container(BaseContainer, Struct):
+    root: Root | Unset = Root(path=rootfs)
+    user: User | Unset = root_user
+    process: BaseProcess | Unset = Process()
+    linux: BaseLinux | Unset = Linux()
