@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 from subprocess import run
-from typing import Literal
+from typing import Any, Literal
 from msgspec import json
 
 from pyoci.runtime.client.cli import CLIArguments, flag, option
@@ -19,6 +19,13 @@ class SystemdCgroup:
         return ":".join([self.slice, self.prefix, self.name])
 
 
+def default[T](value: T, encode: bool = False) -> T | None:
+    if encode:
+        return value
+
+    return None
+
+
 # Yes, this is much stricter than the OCI spec,
 # but runc and crun will support that, and the basic spec is usually not enough
 # TODO: Implement a pure-oci runtime interface, just in case
@@ -26,13 +33,12 @@ class Runtime:
     def __init__(
         self,
         path: str,
-        debug: bool | None,  # = False
-        log: str | None,  # = "/dev/stderr"
-        log_format: str | None,  # = "text"
-        root: str | None,  # = "/run/user/1000//runc"
-        criu: str | None,  # = "criu"
-        systemd_cgroup: SystemdCgroup | str | None,  # = False
-        rootless: bool | Literal["auto"],  # = "auto"
+        debug: bool | None = default(False),  # = False
+        log: str | None = default("/dev/stderr"),  # = "/dev/stderr"
+        log_format: str | None = default("text"),  # = "text"
+        root: str | None = default("/run/user/1000//runc"),  # = "/run/user/1000//runc"
+        systemd_cgroup: bool | None = default(False),  # = False
+        rootless: bool | Literal["auto"] | None = default("auto"),  # = "auto"
     ):
         path = str(path)
 
@@ -42,8 +48,7 @@ class Runtime:
             / option("--log {}")(log)
             / option("--log-format {}")(log_format)
             / option("--root {}")(root)
-            / option("--criu {}")(criu)
-            / option("--systemd-cgroup {}")(systemd_cgroup)
+            / flag("--systemd-cgroup")(systemd_cgroup)
             / option("--rootless")(str(rootless).lower())
         ).list
 
@@ -66,8 +71,8 @@ class Runtime:
             / option("--bundle {}")(bundle)
             / option("--console-socket {}")(console_socket)
             / option("--pid-file {}")(pid_file)
-            / option("--no-pivot")(no_pivot)
-            / option("--no-new-keyring")(no_new_keyring)
+            / flag("--no-pivot")(no_pivot)
+            / flag("--no-new-keyring")(no_new_keyring)
             / option("--preserve-fds {}")(preserve_fds)
         ).list
 
