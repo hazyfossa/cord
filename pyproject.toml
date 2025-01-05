@@ -1,6 +1,6 @@
 [project]
 name = "pyoci"
-version = "0.1.0"
+version = "0.2.0"
 authors = [{ name = "hazyfossa", email = "hazyfossa@gmail.com" }]
 description = "OCI-runtime spec represented as python objects."
 readme = "README.md"
@@ -17,5 +17,5 @@ Homepage = "https://github.com/hazyfossa/pyoci"
 Issues = "https://github.com/hazyfossa/pyoci/issues"
 
 [build-system]
-requires = ["flit_core >=3.2,<4"]
-build-backend = "flit_core.buildapi"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
