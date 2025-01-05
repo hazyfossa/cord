@@ -18,16 +18,17 @@ class Container(Struct):
     if not TYPE_CHECKING:
         ociVersion: str = __oci_version__
 
-    hooks: Hooks | Unset = UNSET
-    annotations: Annotations | Unset = UNSET
+    process: Process | Unset = UNSET
+    mounts: Sequence[Mount] | Unset = UNSET
     hostname: str | Unset = UNSET
     domainname: str | Unset = UNSET
-    mounts: Sequence[Mount] | Unset = UNSET
     root: Root | Unset = UNSET
-    process: Process | Unset = UNSET
 
     linux: Linux | Unset = UNSET
     solaris: Solaris | Unset = UNSET
     windows: Windows | Unset = UNSET
     vm: Vm | Unset = UNSET
     zos: Zos | Unset = UNSET
+
+    hooks: Hooks | Unset = UNSET
+    annotations: Annotations | Unset = UNSET

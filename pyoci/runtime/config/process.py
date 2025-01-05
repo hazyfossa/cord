@@ -40,14 +40,15 @@ class User(Struct):
     https://github.com/opencontainers/runtime-spec/blob/main/config.md#user
     """
 
+    username: str | Unset = UNSET
     uid: UID | Unset = UNSET
     gid: GID | Unset = UNSET
+
     umask: Umask | Unset = UNSET
     additionalGids: Sequence[GID] | Unset = UNSET
-    username: str | Unset = UNSET
 
 
-Env = Sequence[str]
+Env = list[str]
 
 Capability = Annotated[
     str, Meta(pattern="^CAP_[A-Z_]+$")
@@ -100,17 +101,21 @@ class Process(Struct):
 
     cwd: str
     args: Sequence[str] | Unset = UNSET
-    commandLine: str | Unset = UNSET
-    consoleSize: ConsoleSize | Unset = UNSET
     env: Env | Unset = UNSET
-    terminal: bool | Unset = UNSET
     user: User | Unset = UNSET
+
+    terminal: bool | Unset = UNSET
+    consoleSize: ConsoleSize | Unset = UNSET
+
     capabilities: Capabilities | Unset = UNSET
+    noNewPrivileges: bool | Unset = UNSET
     apparmorProfile: str | Unset = UNSET
     oomScoreAdj: int | Unset = UNSET
     selinuxLabel: str | Unset = UNSET
+
     ioPriority: IoPriority | Unset = UNSET
-    noNewPrivileges: bool | Unset = UNSET
     scheduler: Scheduler | Unset = UNSET
     rlimits: Sequence[Rlimit] | Unset = UNSET
     execCPUAffinity: ExecCPUAffinity | Unset = UNSET
+
+    commandLine: str | Unset = UNSET
