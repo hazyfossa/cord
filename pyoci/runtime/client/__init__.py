@@ -9,7 +9,8 @@ from pyoci.runtime.client.cli import (
     flag,
     option,
 )
-from pyoci.runtime.client.executor import IO, RuntimeExecutor
+from pyoci.runtime.client.executor import IODescriptor, RuntimeExecutor
+from pyoci.runtime.client.io import OpenIO
 from pyoci.runtime.client.spec.features import Features
 from pyoci.runtime.client.specific.runc import State
 
@@ -54,11 +55,11 @@ class Runc:
         self._run = executor.run
         self._run_unary = executor.run_unary
 
+    # TODO: separate the IO setup somehow
     def create(
         self,
         id: str,
         bundle: str,
-        io: IO = default(lambda: IO.current(), factory=True),
         console_socket: str | None = None,
         pid_file: str | None = None,
         no_pivot: bool | None = default(False),
@@ -75,10 +76,14 @@ class Runc:
             / option("--preserve-fds")(pass_fds)
         )
 
-        if pass_fds is not None:
-            self._run("create", *args.list, id, pass_fds=pass_fds)
-        else:
-            self._run("create", *args.list, id)
+        io = self._run(
+            "create",
+            *args.list,
+            id,
+            **(
+                {"pass_fds": pass_fds} if pass_fds is not None else {}
+            ),  # TODO: is this the right way to do this?
+        )
 
         return RunningContainer(self, id, io)
 
@@ -98,7 +103,7 @@ class Runc:
 
 class RunningContainer:
     # TODO: Do we need to support IO=None?
-    def __init__(self, runtime: Runc, id: str, io: IO | None = None) -> None:
+    def __init__(self, runtime: Runc, id: str, io: OpenIO) -> None:
         self._runtime = runtime
         self.id = id
         self.io = io
