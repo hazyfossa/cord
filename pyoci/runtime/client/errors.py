@@ -1,10 +1,9 @@
-from multiprocessing import Value
 from subprocess import CompletedProcess
 from typing import Literal
 import msgspec
 
 
-class LogEntry(msgspec.Struct):  # not pyoci.common.Struct, as all fileds are required
+class LogEntry(msgspec.Struct):
     level: Literal["debug", "info", "warn", "error"]
     message: str = msgspec.field(name="msg")
     time: str  # Do we need datetime parsing here?
