@@ -1,7 +1,5 @@
-from dataclasses import dataclass
-from pathlib import Path
-from subprocess import run
-from typing import Any, Literal
+from subprocess import Popen, run, CalledProcessError, PIPE
+from typing import Literal
 
 from msgspec import json
 
@@ -11,8 +9,6 @@ from pyoci.runtime.client.spec.features import Features
 from pyoci.runtime.client.specific.runc import State
 
 
-# Yes, this is much stricter than the OCI spec,
-# but runc and crun will support that, and the basic spec is usually not enough
 # TODO: Implement a pure-oci runtime interface, just in case
 # TODO: cleanly support differences between runc and crun
 class Runc:
@@ -50,22 +46,19 @@ class Runc:
         ).list
 
         def _run(*args):
-            return run(
+            p = Popen(
                 [path, *self.__global_args__, *args],
-                executable=path,
-                capture_output=True,
+                stdout=PIPE,
+                stderr=PIPE,
             )
 
-        if handle_errors:
+            ret = p.wait()
+            if ret != 0 and handle_errors and p.stderr is not None:
+                errors.handle(p.stderr.read())
 
-            def run_with_error_handling(*args):
-                result = _run(*args)
-                errors.handle(result)
-                return result
+            return ret
 
-            self._run = run_with_error_handling
-        else:
-            self._run = _run
+        self._run = _run
 
     def create(
         self,

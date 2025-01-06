@@ -1,4 +1,4 @@
-from subprocess import CompletedProcess
+from subprocess import CalledProcessError, CompletedProcess, Popen
 from typing import Literal
 import msgspec
 
@@ -12,11 +12,8 @@ class LogEntry(msgspec.Struct):
 decoder = msgspec.json.Decoder(LogEntry)
 
 
-def handle(result: CompletedProcess, **kwargs):
-    if result.returncode == 0:
-        return
-
-    log = decoder.decode_lines(result.stderr)
+def handle(stderr: bytes) -> None:
+    log = decoder.decode_lines(stderr)
 
     for entry in log:
         if entry.level == "error":  # TODO: Do we always see at-most one error?
