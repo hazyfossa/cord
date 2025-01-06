@@ -1,5 +1,4 @@
-from asyncio import StreamReader
-from typing import Literal
+from typing import IO, Literal
 import msgspec
 
 
@@ -15,13 +14,13 @@ class LogEntry(msgspec.Struct):
 decoder = msgspec.json.Decoder(LogEntry)
 
 
-async def handle(stderr: StreamReader | None) -> None:
+def handle(stderr: IO[str] | None) -> None:
     if stderr is None:
         raise ContainerRuntimeError(
             "Container runtime failed. Cannot provide an error, stderr isn't captured."
         )
 
-    log = decoder.decode_lines(await stderr.read())
+    log = decoder.decode_lines(stderr.read())
 
     for entry in log:
         if entry.level == "error":  # TODO: Do we always see at-most one error?

@@ -1,13 +1,15 @@
+from functools import cached_property
 from typing import Literal
 
 from msgspec import json
+
 from pyoci.runtime.client.cli import (
     CLIArguments,
     default,
     flag,
     option,
 )
-from pyoci.runtime.client.executor import IO, AsyncRuntimeExecutor
+from pyoci.runtime.client.executor import IO, RuntimeExecutor
 from pyoci.runtime.client.spec.features import Features
 from pyoci.runtime.client.specific.runc import State
 
@@ -48,20 +50,20 @@ class Runc:
             )
         ).list
 
-        executor = AsyncRuntimeExecutor(path, self.__global_args__)
+        executor = RuntimeExecutor(path, self.__global_args__)
         self._run = executor.run
         self._run_unary = executor.run_unary
 
-    async def create(
+    def create(
         self,
         id: str,
         bundle: str,
         io: IO = default(lambda: IO.current(), factory=True),
         console_socket: str | None = None,
         pid_file: str | None = None,
-        no_pivot: bool | None = None,
-        no_new_keyring: bool | None = None,
-        preserve_fds: int | None = None,
+        no_pivot: bool | None = default(False),
+        no_new_keyring: bool | None = default(False),
+        pass_fds: int | None = default(0),  # NOTE: renaming intentinally
     ) -> "RunningContainer":
         args = (
             CLIArguments()
@@ -70,87 +72,46 @@ class Runc:
             / option("--pid-file")(pid_file)
             / flag("--no-pivot")(no_pivot)
             / flag("--no-new-keyring")(no_new_keyring)
-            / option("--preserve-fds")(preserve_fds)
+            / option("--preserve-fds")(pass_fds)
         )
 
-        await self._run_unary("create", *args.list, id)
+        if pass_fds is not None:
+            self._run("create", *args.list, id, pass_fds=pass_fds)
+        else:
+            self._run("create", *args.list, id)
+
         return RunningContainer(self, id, io)
 
-    async def exec(
-        self,
-        id: str,
-        console_socket: str | None = None,
-        cwd: str | None = None,
-        env: dict[str, str] | None = None,
-        tty: bool | None = None,
-        user: str | None = None,
-        additional_gids: list[str] | None = None,
-        process: str | None = None,
-        detach: bool | None = None,
-        pid_file: str | None = None,
-        process_label: str | None = None,
-        apparmor: str | None = None,
-        no_new_privs: bool | None = None,
-        cap: list[str] | None = None,
-        preserve_fds: int | None = None,
-        cgroup: str | None = None,
-        ignore_paused: bool | None = None,
-    ):
-        env_args = (
-            tuple(
-                map(
-                    lambda x: f"-e {'='.join(x)}",
-                    env.items(),
-                )
-            )
-            if env
-            else None
-        )
-
-        args = (
-            CLIArguments()
-            / option("--console-socket")(console_socket)
-            / option("--cwd")(cwd)
-            / flag("--tty")(tty)
-            / option("--user")(user)
-            / option("--additional-gids")(additional_gids)
-            / option("--process")(process)
-            / flag("--detach")(detach)
-            / option("--pid-file")(pid_file)
-            / option("--process-label")(process_label)
-            / option("--apparmor")(apparmor)
-            / flag("--no-new-privs")(no_new_privs)
-            / option("--cap")(cap)
-            / option("--preserve-fds")(preserve_fds)
-            / option("--cgroup")(cgroup)
-            / flag("--ignore-paused")(ignore_paused)
-        )
-
-        await self._run_unary("exec", id, *args.list, *env_args)
-
-    async def list(self) -> list[State]:
-        result = await self._run_unary(["list", "--format=json"])
+    def list(self) -> list[State]:
+        result = self._run_unary(["list", "--format=json"])
         return json.decode(result, type=list[State])
 
-    async def state(self, id: str):
-        result = await self._run_unary(["state", id])
+    def state(self, id: str):
+        result = self._run_unary(["state", id])
         return json.decode(result, type=State)
+
+    @cached_property
+    def features(self):
+        result = self._run_unary(["features"])
+        return json.decode(result, type=Features)
 
 
 class RunningContainer:
-    def __init__(self, runtime: Runc, id: str, io: IO) -> None:
+    # TODO: Do we need to support IO=None?
+    def __init__(self, runtime: Runc, id: str, io: IO | None = None) -> None:
         self._runtime = runtime
         self.id = id
+        self.io = io
 
-    async def start(self) -> None:
-        await self._runtime._run_unary("start", self.id)
+    def start(self) -> None:
+        self._runtime._run_unary("start", self.id)
 
-    async def pause(self) -> None:
-        await self._runtime._run_unary("pause", self.id)
+    def pause(self) -> None:
+        self._runtime._run_unary("pause", self.id)
 
-    async def stop(self) -> None:
-        await self._runtime._run_unary("stop", self.id)
+    def stop(self) -> None:
+        self._runtime._run_unary("stop", self.id)
 
-    async def delete(self, force: bool | None = default(False)) -> None:
+    def delete(self, force: bool | None = default(False)) -> None:
         args = CLIArguments() / flag("--force")(force)
-        await self._runtime._run_unary("delete", *args.list, self.id)
+        self._runtime._run_unary("delete", *args.list, self.id)

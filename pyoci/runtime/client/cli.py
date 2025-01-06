@@ -63,6 +63,10 @@ def default[T](
 ) -> T | None: ...
 
 
+# - default with factory=True is used to set mutable defaults
+# - default with factory=False and encode=False is only for documentation
+# (i.e. showing default values within a container runtime)
+# - default with encode=True is a regular python default
 def default(value, encode=False, factory=False):
     if factory:
         return value()
