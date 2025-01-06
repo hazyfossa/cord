@@ -136,19 +136,6 @@ class Runc:
         result = await self._run_unary(["state", id])
         return json.decode(result, type=State)
 
-    async def start(self, id: str):
-        await self._run_unary("start", id)
-
-    async def pause(self, id: str):
-        await self._run_unary("pause", id)
-
-    async def stop(self, id: str):
-        await self._run_unary("stop", id)
-
-    async def delete(self, id: str, force: bool | None = None):
-        args = CLIArguments() / flag("--force")(force)
-        await self._run_unary("delete", id, *args.list)
-
 
 class RunningContainer:
     def __init__(self, runtime: Runc, id: str, io: IO) -> None:
@@ -156,13 +143,14 @@ class RunningContainer:
         self.id = id
 
     async def start(self) -> None:
-        await self._runtime.start(self.id)
+        await self._runtime._run_unary("start", self.id)
 
     async def pause(self) -> None:
-        await self._runtime.pause(self.id)
+        await self._runtime._run_unary("pause", self.id)
 
     async def stop(self) -> None:
-        await self._runtime.stop(self.id)
+        await self._runtime._run_unary("stop", self.id)
 
-    async def delete(self) -> None:
-        await self._runtime.delete(self.id)
+    async def delete(self, force: bool | None = default(False)) -> None:
+        args = CLIArguments() / flag("--force")(force)
+        await self._runtime._run_unary("delete", *args.list, self.id)
