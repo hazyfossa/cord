@@ -1,6 +1,9 @@
-from subprocess import CalledProcessError, CompletedProcess, Popen
+from asyncio import StreamReader
 from typing import Literal
 import msgspec
+
+
+class ContainerRuntimeError(RuntimeError): ...
 
 
 class LogEntry(msgspec.Struct):
@@ -12,9 +15,14 @@ class LogEntry(msgspec.Struct):
 decoder = msgspec.json.Decoder(LogEntry)
 
 
-def handle(stderr: bytes) -> None:
-    log = decoder.decode_lines(stderr)
+async def handle(stderr: StreamReader | None) -> None:
+    if stderr is None:
+        raise ContainerRuntimeError(
+            "Container runtime failed. Cannot provide an error, stderr isn't captured."
+        )
+
+    log = decoder.decode_lines(await stderr.read())
 
     for entry in log:
         if entry.level == "error":  # TODO: Do we always see at-most one error?
-            raise RuntimeError(entry.message)
+            raise ContainerRuntimeError(entry.message)

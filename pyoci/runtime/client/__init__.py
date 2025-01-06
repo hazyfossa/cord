@@ -1,10 +1,13 @@
-from subprocess import Popen, run, CalledProcessError, PIPE
 from typing import Literal
 
 from msgspec import json
-
-from pyoci.runtime.client import errors
-from pyoci.runtime.client.cli import CLIArguments, default, flag, option
+from pyoci.runtime.client.cli import (
+    CLIArguments,
+    default,
+    flag,
+    option,
+)
+from pyoci.runtime.client.executor import IO, AsyncRuntimeExecutor
 from pyoci.runtime.client.spec.features import Features
 from pyoci.runtime.client.specific.runc import State
 
@@ -16,12 +19,12 @@ class Runc:
         self,
         path: str,
         handle_errors: bool = True,
-        debug: bool | None = default(False),  # = False
-        log: str | None = default("/dev/stderr"),  # = "/dev/stderr"
-        log_format: Literal["text", "json"] | None = default("text"),  # = "text"
-        root: str | None = default("/run/user/1000//runc"),  # = "/run/user/1000//runc"
-        systemd_cgroup: bool | None = default(False),  # = False
-        rootless: bool | Literal["auto"] | None = default("auto"),  # = "auto"
+        debug: bool | None = default(False),
+        log: str | None = default("/dev/stderr"),
+        log_format: Literal["text", "json"] | None = default("text"),
+        root: str | None = default("/run/user/1000//runc"),
+        systemd_cgroup: bool | None = default(False),
+        rootless: bool | Literal["auto"] | None = default("auto"),
     ):
         path = str(path)
 
@@ -45,31 +48,21 @@ class Runc:
             )
         ).list
 
-        def _run(*args):
-            p = Popen(
-                [path, *self.__global_args__, *args],
-                stdout=PIPE,
-                stderr=PIPE,
-            )
+        executor = AsyncRuntimeExecutor(path, self.__global_args__)
+        self._run = executor.run
+        self._run_unary = executor.run_unary
 
-            ret = p.wait()
-            if ret != 0 and handle_errors and p.stderr is not None:
-                errors.handle(p.stderr.read())
-
-            return ret
-
-        self._run = _run
-
-    def create(
+    async def create(
         self,
         id: str,
         bundle: str,
+        io: IO = default(lambda: IO.current(), factory=True),
         console_socket: str | None = None,
         pid_file: str | None = None,
         no_pivot: bool | None = None,
         no_new_keyring: bool | None = None,
         preserve_fds: int | None = None,
-    ):
+    ) -> "RunningContainer":
         args = (
             CLIArguments()
             / option("--bundle")(bundle)
@@ -80,9 +73,10 @@ class Runc:
             / option("--preserve-fds")(preserve_fds)
         )
 
-        self._run("create", *args.list, id)
+        await self._run_unary("create", *args.list, id)
+        return RunningContainer(self, id, io)
 
-    def exec(
+    async def exec(
         self,
         id: str,
         console_socket: str | None = None,
@@ -132,25 +126,43 @@ class Runc:
             / flag("--ignore-paused")(ignore_paused)
         )
 
-        self._run("exec", id, *args.list, *env_args)
+        await self._run_unary("exec", id, *args.list, *env_args)
 
-    def list(self) -> list[State]:
-        result = self._run(["list", "--format=json"])
-        return json.decode(result.stdout, type=list[State])
+    async def list(self) -> list[State]:
+        result = await self._run_unary(["list", "--format=json"])
+        return json.decode(result, type=list[State])
 
-    def state(self, id: str):
-        result = self._run(["state", id])
-        return json.decode(result.stdout, type=State)
+    async def state(self, id: str):
+        result = await self._run_unary(["state", id])
+        return json.decode(result, type=State)
 
-    def start(self, id: str):
-        self._run("start", id)
+    async def start(self, id: str):
+        await self._run_unary("start", id)
 
-    def kill(self, id: str):
-        self._run("stop", id)
+    async def pause(self, id: str):
+        await self._run_unary("pause", id)
 
-    def delete(self, id: str, force: bool | None = None):
+    async def stop(self, id: str):
+        await self._run_unary("stop", id)
+
+    async def delete(self, id: str, force: bool | None = None):
         args = CLIArguments() / flag("--force")(force)
-        self._run("delete", id, *args.list)
+        await self._run_unary("delete", id, *args.list)
 
 
-class StatefulRuntime: ...
+class RunningContainer:
+    def __init__(self, runtime: Runc, id: str, io: IO) -> None:
+        self._runtime = runtime
+        self.id = id
+
+    async def start(self) -> None:
+        await self._runtime.start(self.id)
+
+    async def pause(self) -> None:
+        await self._runtime.pause(self.id)
+
+    async def stop(self) -> None:
+        await self._runtime.stop(self.id)
+
+    async def delete(self) -> None:
+        await self._runtime.delete(self.id)

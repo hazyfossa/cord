@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Self
-from functools import cached_property
+from typing import Any, Callable, Literal, Self, overload
 
 
 # Yes, this isn't DRY at all, however it's easy to read and should be performant enough
@@ -52,7 +51,22 @@ class CLIArguments:
         return self.store
 
 
-def default[T](value: T, encode: bool = False) -> T | None:
+@overload
+def default[T](
+    value: Callable[[], T], encode: bool = False, factory: Literal[True] = True
+) -> T: ...
+
+
+@overload
+def default[T](
+    value: T, encode: bool = False, factory: Literal[False] = False
+) -> T | None: ...
+
+
+def default(value, encode=False, factory=False):
+    if factory:
+        return value()
+
     if encode:
         return value
 
