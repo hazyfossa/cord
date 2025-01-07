@@ -7,15 +7,22 @@ from pyoci.runtime.client import errors
 # python's subprocess pipe handling
 class RuntimeExecutor:
     def __init__(
-        self, path: str, global_args: list[str], raise_errors: bool = True
+        self,
+        path: str,
+        global_args: list[str],
+        raise_errors: bool = True,
+        setpgid: bool = False,
     ) -> None:
         self.path = path
         self.global_args = global_args
         self.raise_errors = raise_errors
+        self.setpgid = setpgid
 
     def run(self, *args, **kwargs) -> OpenIO:
         # TODO: combine_stderr
         # TODO: what about interactive mode?
+
+        # TODO: sanitize env (remove NOTIFY_SOCKET)
         io = IODescriptor.piped()
 
         p = Popen(
@@ -23,6 +30,7 @@ class RuntimeExecutor:
             stdin=io.stdin,
             stdout=io.stdout,
             stderr=io.stderr,
+            process_group=0 if self.setpgid else None,
             **kwargs,
         )
 
@@ -36,5 +44,4 @@ class RuntimeExecutor:
     def run_unary(self, *args):
         io = self.run(*args)
         stdout = io.stdout
-        assert stdout is not None
         return stdout.read()

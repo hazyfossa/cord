@@ -33,6 +33,7 @@ class Runc:
         root: str | None = default("/run/user/1000//runc"),
         systemd_cgroup: bool | None = default(False),
         rootless: bool | Literal["auto"] | None = default("auto"),
+        setpgid: bool = False,
     ):
         path = str(path)
 
@@ -56,7 +57,7 @@ class Runc:
             )
         ).list
 
-        executor = RuntimeExecutor(path, self.__global_args__)
+        executor = RuntimeExecutor(path, self.__global_args__, setpgid=setpgid)
         self._run = executor.run
         self._run_unary = executor.run_unary
 
