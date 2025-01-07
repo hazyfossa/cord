@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Any, Self
+from typing import Any, Callable, Literal, Self, overload
+
 
 # Yes, this isn't DRY at all, however it's easy to read and should be performant enough
 # TODO: Revisit. Maybe use a bit of type-parsing magic?
@@ -10,27 +11,36 @@ from typing import Any, Self
 class CLIArgument(ABC):
     def __init__(self, string: str) -> None:
         self.string = string
+        self.partial = True
+
+    # @cached_property
+    # def pythonic(self) -> str:
+    #     return self.string.strip("-").replace("-", "_")
 
     @abstractmethod
     def __call__(self, *args: Any, **kwargs: Any) -> str | None: ...
 
 
-class flag(CLIArgument):
+class _flag(CLIArgument):
     def __call__(self, value: bool | None) -> str | None:
         if value:
             return self.string
 
 
+flag = _flag  # This is done purely so that the colors in an IDE are different
+
+
 class option(CLIArgument):
     def __call__(self, value: Any) -> str | None:
-        return self.string.format(value)
+        if value is not None:
+            return self.string + f"={value}"
 
 
 class CLIArguments:
     def __init__(self) -> None:
         self.store = []
 
-    def __truediv__(self, arg: str | None) -> Self:
+    def __truediv__(self, arg: str | CLIArgument | None) -> Self:
         if arg is not None:
             self.store.append(arg)
 
@@ -39,3 +49,29 @@ class CLIArguments:
     @property
     def list(self) -> list[str]:
         return self.store
+
+
+@overload
+def default[T](
+    value: Callable[[], T], encode: bool = False, factory: Literal[True] = True
+) -> T: ...
+
+
+@overload
+def default[T](
+    value: T, encode: bool = False, factory: Literal[False] = False
+) -> T | None: ...
+
+
+# - default with factory=True is used to set mutable defaults
+# - default with factory=False and encode=False is only for documentation
+# (i.e. showing default values within a container runtime)
+# - default with encode=True is a regular python default
+def default(value, encode=False, factory=False):
+    if factory:
+        return value()
+
+    if encode:
+        return value
+
+    return None

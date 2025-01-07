@@ -1,148 +1,127 @@
-from dataclasses import dataclass
-from pathlib import Path
-from subprocess import run
-from typing import Any, Literal
+from functools import cached_property
+from typing import Literal
+from warnings import warn
+
 from msgspec import json
 
-from pyoci.runtime.client.cli import CLIArguments, flag, option
-from pyoci.runtime.client.spec.state import State
+from pyoci.runtime.client.cli import (
+    CLIArguments,
+    default,
+    flag,
+    option,
+)
+from pyoci.runtime.client.executor import RuntimeExecutor
+from pyoci.runtime.client.io import OpenIO
 from pyoci.runtime.client.spec.features import Features
+from pyoci.runtime.client.specific.runc import State
+
+warn(
+    "The oci runtime client is in alpha state, and isn't recommended for general usage."
+)
 
 
-@dataclass
-class SystemdCgroup:
-    slice: str
-    prefix: str
-    name: str
-
-    def __str__(self):
-        return ":".join([self.slice, self.prefix, self.name])
-
-
-def default[T](value: T, encode: bool = False) -> T | None:
-    if encode:
-        return value
-
-    return None
-
-
-# Yes, this is much stricter than the OCI spec,
-# but runc and crun will support that, and the basic spec is usually not enough
 # TODO: Implement a pure-oci runtime interface, just in case
-class Runtime:
+# TODO: cleanly support differences between runc and crun
+class Runc:
     def __init__(
         self,
         path: str,
-        debug: bool | None = default(False),  # = False
-        log: str | None = default("/dev/stderr"),  # = "/dev/stderr"
-        log_format: str | None = default("text"),  # = "text"
-        root: str | None = default("/run/user/1000//runc"),  # = "/run/user/1000//runc"
-        systemd_cgroup: bool | None = default(False),  # = False
-        rootless: bool | Literal["auto"] | None = default("auto"),  # = "auto"
+        handle_errors: bool = True,
+        debug: bool | None = default(False),
+        log: str | None = default("/dev/stderr"),
+        log_format: Literal["text", "json"] | None = default("text"),
+        root: str | None = default("/run/user/1000//runc"),
+        systemd_cgroup: bool | None = default(False),
+        rootless: bool | Literal["auto"] | None = default("auto"),
     ):
         path = str(path)
+
+        if handle_errors:
+            if log or log_format:
+                raise ValueError(  # TODO: is this an appropriate Exception type?
+                    "Setting log or log_format is not supported when using handle_errors"
+                )
+
+            log_format = "json"
 
         self.__global_args__ = (
             CLIArguments()
             / flag("--debug")(debug)
-            / option("--log {}")(log)
-            / option("--log-format {}")(log_format)
-            / option("--root {}")(root)
+            / option("--log")(log)
+            / option("--log-format")(log_format)
+            / option("--root")(root)
             / flag("--systemd-cgroup")(systemd_cgroup)
-            / option("--rootless")(str(rootless).lower())
+            / option("--rootless")(
+                str(rootless).lower() if rootless is not None else None
+            )
         ).list
 
-        self._run = lambda *args: run(
-            [path, *self.__global_args__, *args],
-        )
+        executor = RuntimeExecutor(path, self.__global_args__)
+        self._run = executor.run
+        self._run_unary = executor.run_unary
 
+    # TODO: separate the IO setup somehow
     def create(
         self,
         id: str,
         bundle: str,
         console_socket: str | None = None,
         pid_file: str | None = None,
-        no_pivot: bool | None = None,
-        no_new_keyring: bool | None = None,
-        preserve_fds: int | None = None,
-    ):
+        no_pivot: bool | None = default(False),
+        no_new_keyring: bool | None = default(False),
+        pass_fds: int | None = default(0),  # NOTE: renaming intentinally
+    ) -> OpenIO:
         args = (
             CLIArguments()
-            / option("--bundle {}")(bundle)
-            / option("--console-socket {}")(console_socket)
-            / option("--pid-file {}")(pid_file)
+            / option("--bundle")(bundle)
+            / option("--console-socket")(console_socket)
+            / option("--pid-file")(pid_file)
             / flag("--no-pivot")(no_pivot)
             / flag("--no-new-keyring")(no_new_keyring)
-            / option("--preserve-fds {}")(preserve_fds)
-        ).list
-
-        self._run("create", id, *args)
-
-    def exec(
-        self,
-        id: str,
-        console_socket: str | None = None,
-        cwd: str | None = None,
-        env: dict[str, str] | None = None,
-        tty: bool | None = None,
-        user: str | None = None,
-        additional_gids: list[str] | None = None,
-        process: str | None = None,
-        detach: bool | None = None,
-        pid_file: str | None = None,
-        process_label: str | None = None,
-        apparmor: str | None = None,
-        no_new_privs: bool | None = None,
-        cap: list[str] | None = None,
-        preserve_fds: int | None = None,
-        cgroup: str | None = None,
-        ignore_paused: bool | None = None,
-    ):
-        env_args = (
-            tuple(
-                map(
-                    lambda x: f"-e {'='.join(x)}",
-                    env.items(),
-                )
-            )
-            if env
-            else None
+            / option("--preserve-fds")(pass_fds)
         )
 
-        args = (
-            CLIArguments()
-            / option("--console-socket {}")(console_socket)
-            / option("--cwd {}")(cwd)
-            / flag("--tty")(tty)
-            / option("--user {}")(user)
-            / option("--additional-gids {}")(additional_gids)
-            / option("--process {}")(process)
-            / flag("--detach")(detach)
-            / option("--pid-file {}")(pid_file)
-            / option("--process-label {}")(process_label)
-            / option("--apparmor {}")(apparmor)
-            / flag("--no-new-privs")(no_new_privs)
-            / option("--cap {}")(cap)
-            / option("--preserve-fds {}")(preserve_fds)
-            / option("--cgroup {}")(cgroup)
-            / flag("--ignore-paused")(ignore_paused)
-        ).list
+        io = self._run(
+            "create",
+            *args.list,
+            id,
+            **(
+                {"pass_fds": pass_fds} if pass_fds is not None else {}
+            ),  # TODO: is this the right way to do this?
+        )
 
-        self._run("exec", id, *args, *env_args)
+        return io
+
+    def start(self, id: str) -> None:
+        self._run_unary("start", id)
+
+    def pause(self, id: str) -> None:
+        self._run_unary("pause", id)
+
+    def stop(self, id: str) -> None:
+        self._run_unary("stop", id)
+
+    def delete(self, id: str, force: bool | None = default(False)) -> None:
+        args = CLIArguments() / flag("--force")(force)
+        self._run_unary("delete", *args.list, id)
+
+    def list(self) -> list[State]:
+        result = self._run_unary(["list", "--format=json"])
+        return json.decode(result, type=list[State])
 
     def state(self, id: str):
-        result = self._run(["state", id])
-        return json.decode(result.stdout, type=State)
+        result = self._run_unary(["state", id])
+        return json.decode(result, type=State)
 
-    def start(self, id: str):
-        self._run("start", id)
-
-    def kill(self, id: str):
-        self._run("stop", id)
-
-    def delete(self, id: str, force: bool | None = None):
-        args = CLIArguments() / flag("--force")(force)
-        self._run("delete", id, *args.list)
+    @cached_property
+    def features(self):
+        result = self._run_unary(["features"])
+        return json.decode(result, type=Features)
 
 
-class StatefulRuntime: ...
+class RunningContainer:
+    # TODO: Do we need to support IO=None?
+    def __init__(self, runtime: Runc, id: str, io: OpenIO) -> None:
+        self._runtime = runtime
+        self.id = id
+        self.io = io
