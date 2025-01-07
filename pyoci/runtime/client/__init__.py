@@ -1,5 +1,6 @@
 from functools import cached_property
 from typing import Literal
+from warnings import warn
 
 from msgspec import json
 
@@ -13,6 +14,10 @@ from pyoci.runtime.client.executor import RuntimeExecutor
 from pyoci.runtime.client.io import OpenIO
 from pyoci.runtime.client.spec.features import Features
 from pyoci.runtime.client.specific.runc import State
+
+warn(
+    "The oci runtime client is in alpha state, and isn't recommended for general usage."
+)
 
 
 # TODO: Implement a pure-oci runtime interface, just in case
