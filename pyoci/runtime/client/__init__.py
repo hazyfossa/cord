@@ -9,7 +9,7 @@ from pyoci.runtime.client.cli import (
     flag,
     option,
 )
-from pyoci.runtime.client.executor import IODescriptor, RuntimeExecutor
+from pyoci.runtime.client.executor import RuntimeExecutor
 from pyoci.runtime.client.io import OpenIO
 from pyoci.runtime.client.spec.features import Features
 from pyoci.runtime.client.specific.runc import State
@@ -65,7 +65,7 @@ class Runc:
         no_pivot: bool | None = default(False),
         no_new_keyring: bool | None = default(False),
         pass_fds: int | None = default(0),  # NOTE: renaming intentinally
-    ) -> "RunningContainer":
+    ) -> OpenIO:
         args = (
             CLIArguments()
             / option("--bundle")(bundle)
@@ -85,7 +85,20 @@ class Runc:
             ),  # TODO: is this the right way to do this?
         )
 
-        return RunningContainer(self, id, io)
+        return io
+
+    def start(self, id: str) -> None:
+        self._run_unary("start", id)
+
+    def pause(self, id: str) -> None:
+        self._run_unary("pause", id)
+
+    def stop(self, id: str) -> None:
+        self._run_unary("stop", id)
+
+    def delete(self, id: str, force: bool | None = default(False)) -> None:
+        args = CLIArguments() / flag("--force")(force)
+        self._run_unary("delete", *args.list, id)
 
     def list(self) -> list[State]:
         result = self._run_unary(["list", "--format=json"])
@@ -107,16 +120,3 @@ class RunningContainer:
         self._runtime = runtime
         self.id = id
         self.io = io
-
-    def start(self) -> None:
-        self._runtime._run_unary("start", self.id)
-
-    def pause(self) -> None:
-        self._runtime._run_unary("pause", self.id)
-
-    def stop(self) -> None:
-        self._runtime._run_unary("stop", self.id)
-
-    def delete(self, force: bool | None = default(False)) -> None:
-        args = CLIArguments() / flag("--force")(force)
-        self._runtime._run_unary("delete", *args.list, self.id)

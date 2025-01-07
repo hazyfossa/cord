@@ -11,7 +11,7 @@ Fd: TypeAlias = int
 
 @dataclass
 class IODescriptor:
-    stdin: Fd = DEVNULL
+    stdin: Fd = DEVNULL  # TODO: won't stdin=DEVNULL cause problems?
     stdout: Fd = DEVNULL
     stderr: Fd = DEVNULL
 
