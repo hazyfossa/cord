@@ -1,9 +1,7 @@
 from datetime import datetime
-from pathlib import Path
 
-from msgspec import field
+from pyoci.common import UNSET, Unset
 from pyoci.runtime import __oci_version__
-from pyoci.common import Unset, UNSET
 from pyoci.runtime.client.spec.state import State as BaseState
 
 

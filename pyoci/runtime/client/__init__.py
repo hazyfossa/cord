@@ -1,6 +1,7 @@
 from functools import cached_property
+from io import BytesIO
 from subprocess import PIPE, Popen
-from typing import Literal
+from typing import IO, Literal
 from warnings import warn
 from os import environ
 
@@ -16,6 +17,7 @@ from pyoci.runtime.client.cli import (
 from pyoci.runtime.client.io import OpenIO
 from pyoci.runtime.client.spec.features import Features
 from pyoci.runtime.client.specific.runc import State
+from pyoci.runtime.client.specific.runc.constraints import Constraints
 
 warn(
     "The oci runtime client is in alpha state, and isn't recommended for general usage."
@@ -69,15 +71,15 @@ class Runc:
 
         def _run(
             *args,
-            input: bool = False,
-            output: bool = True,
+            stdin: int | IO | None = None,
+            stdout: int | IO | None = PIPE,
             wait: bool = True,
             **kwargs,
         ):
             process = Popen(
                 [path, *self.__global_args__, *args],
-                stdin=PIPE if input else None,
-                stdout=PIPE if output else None,
+                stdin=stdin,
+                stdout=stdout,
                 stderr=PIPE,  # TODO: errors without stderr
                 process_group=0 if setpgid else None,
                 **kwargs,
@@ -116,6 +118,7 @@ class Runc:
             *args.list,
             id,
             pass_fds=tuple(range(3, 3 + pass_fds)) if pass_fds is not None else (),
+            stdin=PIPE,
         )
 
         return OpenIO(proc.stdin, proc.stdout, proc.stderr)  # type: ignore # TODO: IO
@@ -151,3 +154,13 @@ class Runc:
         p = self._run("features")
         errors.handle(p)
         return json.decode(p.stdout.read(), type=Features)  # type: ignore # TODO: IO
+
+    def update(self, id: str, new_constraints: Constraints):
+        # TODO: use encode_into instead of BytesIO to save memory
+        p = self._run(
+            "update",
+            "-r -",  # NOTE: this is required for runc to read from stdin
+            id,
+            stdin=BytesIO(json.encode(new_constraints)),
+        )
+        errors.handle(p)
