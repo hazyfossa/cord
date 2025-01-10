@@ -5,17 +5,19 @@ from pyoci.common import Struct, Unset, UNSET
 _type_oci = "application/vnd.oci"
 
 
+# fmt: off
 class MediaType(StrEnum):
-    content_descriptor = f"{_type_oci}.image.descriptor.v1+json"
-    layout = f"{_type_oci}.layout.header.v1+json"
-    image_manifest = f"{_type_oci}.image.manifest.v1+json"
-    image_index = f"{_type_oci}.image.index.v1+json"
-    image_config = f"{_type_oci}.image.config.v1+json"
-    empty = f"{_type_oci}.empty.v1+json"
+    content_descriptor = "application/vnd.oci.image.descriptor.v1+json"
+    layout =             "application/vnd.oci.image.layout.v1+json"
+    image_manifest =     "application/vnd.oci.image.manifest.v1+json"
+    image_index =        "application/vnd.oci.image.index.v1+json"
+    image_config =       "application/vnd.oci.image.config.v1+json"
+    empty =              "application/vnd.oci.image.layer.v1.empty"
 
-    layer = f"{_type_oci}.image.layer.v1.tar"
-    layer_gzip = f"{_type_oci}.image.layer.v1.tar+gzip"
-    layer_zstd = f"{_type_oci}.image.layer.v1.tar+zstd"
+    layer =              "application/vnd.oci.image.layer.v1.tar"
+    layer_gzip =         "application/vnd.oci.image.layer.v1.tar+gzip"
+    layer_zstd =         "application/vnd.oci.image.layer.v1.tar+zstd"
+# fmt: on
 
 
 def annotation(name: str) -> Unset:
