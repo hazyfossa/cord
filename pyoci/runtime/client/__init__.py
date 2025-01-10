@@ -1,16 +1,17 @@
 from functools import cached_property
+from subprocess import PIPE, Popen
 from typing import Literal
 from warnings import warn
 
 from msgspec import json
 
+from pyoci.runtime.client import errors
 from pyoci.runtime.client.cli import (
     CLIArguments,
     default,
     flag,
     option,
 )
-from pyoci.runtime.client.executor import RuntimeExecutor
 from pyoci.runtime.client.io import OpenIO
 from pyoci.runtime.client.spec.features import Features
 from pyoci.runtime.client.specific.runc import State
@@ -28,7 +29,7 @@ class Runc:
         path: str,
         handle_errors: bool = True,
         debug: bool | None = default(False),
-        # TODO: can log be a pipe, so we can get logs even after container start?
+        # TODO: errors without stderr
         log: str | None = default("/dev/stderr"),
         log_format: Literal["text", "json"] | None = default("text"),
         root: str | None = default("/run/user/1000//runc"),
@@ -40,7 +41,7 @@ class Runc:
 
         if handle_errors:
             if log or log_format:
-                raise ValueError(  # TODO: is this an appropriate Exception type?
+                raise ValueError(
                     "Setting log or log_format is not supported when using handle_errors"
                 )
 
@@ -58,9 +59,27 @@ class Runc:
             )
         ).list
 
-        executor = RuntimeExecutor(path, self.__global_args__, setpgid=setpgid)
-        self._run = executor.run
-        self._run_unary = executor.run_unary
+        def _run(
+            *args,
+            input: bool = False,
+            output: bool = True,
+            wait: bool = True,
+            **kwargs,
+        ):
+            process = Popen(
+                [path, *self.__global_args__, *args],
+                stdin=PIPE if input else None,
+                stdout=PIPE if output else None,
+                stderr=PIPE,  # TODO: errors without stderr
+                **kwargs,
+            )
+
+            if wait:
+                process.wait()
+
+            return process
+
+        self._run = _run
 
     # TODO: separate the IO setup somehow
     def create(
@@ -83,39 +102,43 @@ class Runc:
             / option("--preserve-fds")(pass_fds)
         )
 
-        io = self._run(
+        proc = self._run(
             "create",
             *args.list,
             id,
-            **(
-                {"pass_fds": pass_fds} if pass_fds is not None else {}
-            ),  # TODO: is this the right way to do this?
+            pass_fds=tuple(range(3, 3 + pass_fds)) if pass_fds is not None else (),
         )
 
-        return io
+        return OpenIO(proc.stdin, proc.stdout, proc.stderr)  # type: ignore # TODO: IO
 
     def start(self, id: str) -> None:
-        self._run_unary("start", id)
+        self._run("start", id)
 
     def pause(self, id: str) -> None:
-        self._run_unary("pause", id)
+        p = self._run("pause", id)
+        errors.handle(p)
 
     def stop(self, id: str) -> None:
-        self._run_unary("stop", id)
+        p = self._run("stop", id)
+        errors.handle(p)
 
     def delete(self, id: str, force: bool | None = default(False)) -> None:
         args = CLIArguments() / flag("--force")(force)
-        self._run_unary("delete", *args.list, id)
+        p = self._run("delete", *args.list, id)
+        errors.handle(p)
 
     def list(self) -> list[State]:
-        result = self._run_unary(["list", "--format=json"])
-        return json.decode(result, type=list[State])
+        p = self._run("list", "--format=json")
+        errors.handle(p)
+        return json.decode(p.stdout.read(), type=list[State])  # type: ignore # TODO: IO
 
     def state(self, id: str):
-        result = self._run_unary(["state", id])
-        return json.decode(result, type=State)
+        p = self._run("state", id)
+        errors.handle(p)
+        return json.decode(p.stdout.read(), type=State)  # type: ignore # TODO: IO
 
     @cached_property
     def features(self):
-        result = self._run_unary(["features"])
-        return json.decode(result, type=Features)
+        p = self._run("features")
+        errors.handle(p)
+        return json.decode(p.stdout.read(), type=Features)  # type: ignore # TODO: IO
