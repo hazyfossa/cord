@@ -1,10 +1,10 @@
 from datetime import datetime
 
 from msgspec import Struct
-from pyoci.common import UNSET, Unset
 
+from pyoci.common import UNSET, Unset
+from pyoci.image.descriptor import Platform
 from pyoci.image.digest import Digest
-from pyoci.image.platform import Platform
 from pyoci.runtime.config import Container as Config
 from pyoci.runtime.config.process import Process
 
@@ -55,3 +55,5 @@ class ImageConfig(
             args=(self.Cmd or []) + (self.Entrypoint or []) or UNSET,
             env=self.Env,
         )
+
+        raise NotImplementedError  # TODO

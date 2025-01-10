@@ -1,12 +1,18 @@
 from enum import StrEnum
-from msgspec import field
+from typing import Annotated
+from msgspec import Meta, field
 from pyoci.common import Struct, Unset, UNSET
 
-_type_oci = "application/vnd.oci"
+MediaType = Annotated[
+    str,
+    Meta(
+        pattern="^[A-Za-z0-9][A-Za-z0-9!#$&^_.+-]{0,126}/[A-Za-z0-9][A-Za-z0-9!#$&^_.+-]{0,126}$"
+    ),
+]
 
 
 # fmt: off
-class MediaType(StrEnum):
+class OciMediaType(StrEnum):
     content_descriptor = "application/vnd.oci.image.descriptor.v1+json"
     layout =             "application/vnd.oci.image.layout.v1+json"
     image_manifest =     "application/vnd.oci.image.manifest.v1+json"

@@ -1,7 +1,8 @@
-from typing import TYPE_CHECKING
-from pyoci.common import Struct, Unset, UNSET
+from typing import TYPE_CHECKING, Literal
+
+from pyoci.common import UNSET, Struct, Unset
 from pyoci.image.descriptor import ContentDescriptor, ManifestDescriptor
-from pyoci.image.descriptor import MediaType
+from pyoci.image.const import MediaType, OciMediaType
 
 
 class Index(Struct):
@@ -9,8 +10,8 @@ class Index(Struct):
 
     if not TYPE_CHECKING:
         schemaVersion: Literal[2] = 2
+        mediaType: Literal[OciMediaType.image_index] = OciMediaType.image_index
 
-    mediaType: MediaType | Unset = UNSET
     artifactType: MediaType | Unset = UNSET
     subject: ContentDescriptor | Unset = UNSET
     annotations: dict[str, str] | Unset = UNSET

@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Literal
 from pyoci.base_types import Annotations
 from pyoci.common import Struct, Unset, UNSET
 from pyoci.image.descriptor import ContentDescriptor
-from pyoci.image.const import MediaType
+from pyoci.image.const import MediaType, OciMediaType
 
 
 class ImageManifest(Struct):
@@ -15,8 +15,8 @@ class ImageManifest(Struct):
 
     if not TYPE_CHECKING:
         schemaVersion: Literal[2] = 2
+        mediaType: Literal[OciMediaType.image_manifest] = OciMediaType.image_manifest
 
-    mediaType: MediaType | Unset = UNSET
     artifactType: MediaType | Unset = UNSET
     subject: ContentDescriptor | Unset = UNSET
     annotations: Annotations | Unset = UNSET
