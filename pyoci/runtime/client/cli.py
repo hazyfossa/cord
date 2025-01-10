@@ -51,26 +51,10 @@ class CLIArguments:
         return self.store
 
 
-@overload
-def default[T](
-    value: Callable[[], T], encode: bool = False, factory: Literal[True] = True
-) -> T: ...
-
-
-@overload
-def default[T](
-    value: T, encode: bool = False, factory: Literal[False] = False
-) -> T | None: ...
-
-
-# - default with factory=True is used to set mutable defaults
-# - default with factory=False and encode=False is only for documentation
+# - default with encode=False is only for documentation
 # (i.e. showing default values within a container runtime)
 # - default with encode=True is a regular python default
-def default(value, encode=False, factory=False):
-    if factory:
-        return value()
-
+def default(value, encode=False):
     if encode:
         return value
 
