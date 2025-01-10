@@ -1,12 +1,26 @@
-from functools import cached_property
 import os
-import sys
 from dataclasses import dataclass
 from subprocess import DEVNULL, PIPE, STDOUT
-from typing import IO as IOType, BinaryIO, Literal
-from typing import Any, Callable, TypeAlias
+from typing import BinaryIO, Callable, Literal, TypeAlias
 
 Fd: TypeAlias = int
+
+
+@dataclass
+class OpenIO:
+    stdin: BinaryIO
+    stdout: BinaryIO
+    stderr: BinaryIO
+
+    @property
+    def as_tuple(self):
+        return (self.stdin, self.stdout, self.stderr)
+
+    def close(self) -> None:
+        map(lambda x: x.close(), self.as_tuple)
+
+
+#! Deprecated
 
 
 @dataclass
@@ -45,7 +59,7 @@ class IODescriptor:
         return override.revert
 
 
-class IOOverride:  #! TODO: Doesn't work
+class IOOverride:  #! Doesn't work
     def __init__(self, previous: IODescriptor, with_: IODescriptor) -> None:
         self.original = previous.as_tuple
         self.new = with_.as_tuple
@@ -61,25 +75,3 @@ class IOOverride:  #! TODO: Doesn't work
 
     def __exit__(self):
         self.revert()
-
-
-@dataclass
-class OpenIO:
-    stdin: BinaryIO
-    stdout: BinaryIO
-    stderr: BinaryIO
-
-    @cached_property
-    def descriptor(self) -> IODescriptor:
-        return IODescriptor.from_open_io(self)
-
-    @property
-    def as_tuple(self):
-        return (self.stdin, self.stdout, self.stderr)
-
-    def use_as_current(self) -> Callable[[], None]:  #! TODO: Doesn't work
-        raise NotImplementedError
-        return self.descriptor.use_as_current()
-
-    def close(self) -> None:
-        map(lambda x: x.close(), self.as_tuple)
