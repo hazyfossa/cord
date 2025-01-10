@@ -8,7 +8,7 @@ from pyoci.runtime.client.spec.state import State as BaseState
 
 class ListEntry(
     BaseState
-):  # When listing, crun provides more than the spec, but less than "state"
+):  # NOTE: When listing, crun provides more than the spec, but less than "state"
     created: datetime | Unset = UNSET
     owner: str | Unset = UNSET
 

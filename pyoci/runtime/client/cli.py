@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Literal, Self, overload
+from typing import Any, Self
 
 
 # Yes, this isn't DRY at all, however it's easy to read and should be performant enough
@@ -12,10 +12,6 @@ class CLIArgument(ABC):
     def __init__(self, string: str) -> None:
         self.string = string
         self.partial = True
-
-    # @cached_property
-    # def pythonic(self) -> str:
-    #     return self.string.strip("-").replace("-", "_")
 
     @abstractmethod
     def __call__(self, *args: Any, **kwargs: Any) -> str | None: ...

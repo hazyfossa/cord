@@ -5,6 +5,7 @@ from pyoci.runtime.client import errors
 
 # TODO: maybe it's possible to implement more efficent handling of file descriptors than with
 # python's subprocess pipe handling
+# TODO: Is reaping an issue in python?
 class RuntimeExecutor:
     def __init__(
         self,

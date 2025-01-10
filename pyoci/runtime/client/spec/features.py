@@ -18,5 +18,5 @@ class Features(Struct):
     hooks: Sequence[str] | Unset = UNSET
     mountOptions: Sequence[str] | Unset = UNSET
     annotations: Annotations | Unset = UNSET
-    potentiallyUnsafeConfigAnnotations: Sequence[str] | Unset = UNSET  # ?
+    potentiallyUnsafeConfigAnnotations: Sequence[str] | Unset = UNSET
     linux: LinuxFeatures | Unset = UNSET

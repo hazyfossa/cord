@@ -28,6 +28,7 @@ class Runc:
         path: str,
         handle_errors: bool = True,
         debug: bool | None = default(False),
+        # TODO: can log be a pipe, so we can get logs even after container start?
         log: str | None = default("/dev/stderr"),
         log_format: Literal["text", "json"] | None = default("text"),
         root: str | None = default("/run/user/1000//runc"),
@@ -118,11 +119,3 @@ class Runc:
     def features(self):
         result = self._run_unary(["features"])
         return json.decode(result, type=Features)
-
-
-class RunningContainer:
-    # TODO: Do we need to support IO=None?
-    def __init__(self, runtime: Runc, id: str, io: OpenIO) -> None:
-        self._runtime = runtime
-        self.id = id
-        self.io = io
