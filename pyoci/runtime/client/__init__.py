@@ -2,6 +2,7 @@ from functools import cached_property
 from subprocess import PIPE, Popen
 from typing import Literal
 from warnings import warn
+from os import environ
 
 from msgspec import json
 
@@ -19,6 +20,13 @@ from pyoci.runtime.client.specific.runc import State
 warn(
     "The oci runtime client is in alpha state, and isn't recommended for general usage."
 )
+
+# TODO: filter out automatically
+# Is this runc-specific?
+if "NOTIFY_SOCKET" in environ:
+    warn(
+        "NOTIFY_SOCKET environment variable is set, and will be passed to the runtime, which may cause issues."
+    )
 
 
 # TODO: Implement a pure-oci runtime interface, just in case
@@ -71,6 +79,7 @@ class Runc:
                 stdin=PIPE if input else None,
                 stdout=PIPE if output else None,
                 stderr=PIPE,  # TODO: errors without stderr
+                process_group=0 if setpgid else None,
                 **kwargs,
             )
 
