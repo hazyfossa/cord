@@ -4,9 +4,8 @@ from typing import Annotated
 from msgspec import Meta
 
 from pyoci.base_types import Annotations, Data, Int64
-from pyoci.common import Struct, Unset, UNSET
+from pyoci.common import UNSET, Struct, Unset
 from pyoci.image.digest import Digest
-from pyoci.image.platform import Platform
 
 MediaType = Annotated[
     str,
@@ -29,6 +28,14 @@ class ContentDescriptor(Struct):
     data: Data | Unset = UNSET
     artifactType: MediaType | Unset = UNSET
     annotations: Annotations | Unset = UNSET
+
+
+class Platform(Struct):
+    architecture: str
+    os: str
+    os_version: str | Unset = UNSET
+    os_features: list[str] | Unset = UNSET
+    variant: str | Unset = UNSET
 
 
 class ManifestDescriptor(ContentDescriptor):
