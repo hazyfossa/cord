@@ -1,23 +1,18 @@
 from functools import cached_property
 from io import BytesIO
+from os import environ
 from subprocess import PIPE, Popen
 from typing import IO, Literal
 from warnings import warn
-from os import environ
 
 from msgspec import json
 
 from pyoci.runtime.client import errors
-from pyoci.runtime.client.cli import (
-    CLIArguments,
-    default,
-    flag,
-    option,
-)
 from pyoci.runtime.client.io import OpenIO
 from pyoci.runtime.client.spec.features import Features
 from pyoci.runtime.client.specific.runc import State
 from pyoci.runtime.client.specific.runc.constraints import Constraints
+from pyoci.runtime.client.utils import default
 
 warn(
     "The oci runtime client is in alpha state, and isn't recommended for general usage."
@@ -57,17 +52,21 @@ class Runc:
 
             log_format = "json"
 
-        self.__global_args__ = (
-            CLIArguments()
-            / flag("--debug")(debug)
-            / option("--log")(log)
-            / option("--log-format")(log_format)
-            / option("--root")(root)
-            / flag("--systemd-cgroup")(systemd_cgroup)
-            / option("--rootless")(
-                str(rootless).lower() if rootless is not None else None
-            )
-        ).list
+        args = []
+        if debug:
+            args.append("--debug")
+        if log:
+            args.append(f"--log={log}")
+        if log_format:
+            args.append(f"--log-format={log_format}")
+        if root:
+            args.append(f"--root={root}")
+        if systemd_cgroup:
+            args.append("--systemd-cgroup")
+        if rootless:
+            args.append(f"--rootless={str(rootless).lower()}")
+
+        self.__global_args__ = args
 
         def _run(
             *args,
@@ -103,19 +102,23 @@ class Runc:
         no_new_keyring: bool | None = default(False),
         pass_fds: int | None = default(0),  # NOTE: renaming intentinally
     ) -> OpenIO:
-        args = (
-            CLIArguments()
-            / option("--bundle")(bundle)
-            / option("--console-socket")(console_socket)
-            / option("--pid-file")(pid_file)
-            / flag("--no-pivot")(no_pivot)
-            / flag("--no-new-keyring")(no_new_keyring)
-            / option("--preserve-fds")(pass_fds)
-        )
+        args = []
+        if bundle:
+            args.append(f"--bundle={bundle}")
+        if console_socket:
+            args.append(f"--console-socket={console_socket}")
+        if pid_file:
+            args.append(f"--pid-file={pid_file}")
+        if no_pivot:
+            args.append("--no-pivot")
+        if no_new_keyring:
+            args.append("--no-new-keyring")
+        if pass_fds:
+            args.append(f"--preserve-fds={pass_fds}")
 
         proc = self._run(
             "create",
-            *args.list,
+            *args,
             id,
             pass_fds=tuple(range(3, 3 + pass_fds)) if pass_fds is not None else (),
             stdin=PIPE,
@@ -135,8 +138,8 @@ class Runc:
         errors.handle(p)
 
     def delete(self, id: str, force: bool | None = default(False)) -> None:
-        args = CLIArguments() / flag("--force")(force)
-        p = self._run("delete", *args.list, id)
+        args = ["--force"] if force else []
+        p = self._run("delete", *args, id)
         errors.handle(p)
 
     def list(self) -> list[State]:

@@ -81,6 +81,7 @@ mounts = [
     ),
 ]
 
+# TODO: consider a toggle-able struct
 namespaces = [
     Namespace("pid"),
     Namespace("ipc"),

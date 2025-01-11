@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Self
 
+#! DEPRECATED
 
 # Yes, this isn't DRY at all, however it's easy to read and should be performant enough
 # TODO: Revisit. Maybe use a bit of type-parsing magic?
@@ -45,13 +46,3 @@ class CLIArguments:
     @property
     def list(self) -> list[str]:
         return self.store
-
-
-# - default with encode=False is only for documentation
-# (i.e. showing default values within a container runtime)
-# - default with encode=True is a regular python default
-def default(value, encode=False):
-    if encode:
-        return value
-
-    return None
