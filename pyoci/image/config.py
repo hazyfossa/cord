@@ -5,8 +5,12 @@ from msgspec import Struct
 from pyoci.common import UNSET, Unset
 from pyoci.image.descriptor import Platform
 from pyoci.image.digest import Digest
-from pyoci.runtime.config import Container as Config
-from pyoci.runtime.config.process import Process
+
+# TODO: allow specifying other templates if we dont merge this with the main structs
+from pyoci.runtime.config.templates.default import (
+    Container as Config,
+    Process,
+)
 
 
 class RootFS(Struct):
@@ -49,7 +53,7 @@ class ImageConfig(
     Labels: dict[str, str] | Unset = UNSET
     StopSignal: str | Unset = UNSET
 
-    def to_bundle(self) -> Config:
+    def to_default_container_config(self) -> Config:
         process = Process(
             cwd=self.WorkingDir or "/",  # TODO remove this non-spec default
             args=(self.Cmd or []) + (self.Entrypoint or []) or UNSET,

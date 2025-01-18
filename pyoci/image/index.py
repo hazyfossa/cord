@@ -1,11 +1,11 @@
 from typing import TYPE_CHECKING, Literal
 
-from pyoci.common import UNSET, Struct, Unset
+from pyoci.common import UNSET, SimpleJsonMixin, Struct, Unset
 from pyoci.image.descriptor import ContentDescriptor, ManifestDescriptor
 from pyoci.image.const import MediaType, OciMediaType
 
 
-class Index(Struct):
+class Index(Struct, SimpleJsonMixin):
     manifests: list[ManifestDescriptor]
 
     if not TYPE_CHECKING:

@@ -4,12 +4,12 @@ from collections.abc import Sequence
 from typing import TYPE_CHECKING, Literal
 
 from pyoci.base_types import Annotations
-from pyoci.common import Struct, Unset, UNSET
-from pyoci.image.descriptor import ContentDescriptor
+from pyoci.common import UNSET, SimpleJsonMixin, Struct, Unset
 from pyoci.image.const import MediaType, OciMediaType
+from pyoci.image.descriptor import ContentDescriptor
 
 
-class ImageManifest(Struct):
+class ImageManifest(Struct, SimpleJsonMixin):
     config: ContentDescriptor
     layers: Sequence[ContentDescriptor]
 

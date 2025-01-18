@@ -30,7 +30,7 @@ if "NOTIFY_SOCKET" in environ:
 class Runc:
     def __init__(
         self,
-        path: str,
+        path: str = "runc",
         handle_errors: bool = True,
         debug: bool | None = default(False),
         # TODO: errors without stderr
