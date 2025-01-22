@@ -39,3 +39,5 @@ def handle(process: Popen, **context) -> None:
     for entry in log:
         if entry.level == "error":
             raise ContainerRuntimeError(entry.message)
+        
+    raise ContainerRuntimeError(f"Exited with code {ret}. Couldn't find an error in the log.")

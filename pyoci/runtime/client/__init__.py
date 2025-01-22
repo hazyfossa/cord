@@ -13,10 +13,6 @@ from pyoci.runtime.client.specific.runc import State
 from pyoci.runtime.client.specific.runc.constraints import Constraints
 from pyoci.runtime.client.utils import OpenIO, default
 
-# warn(
-#     "The oci runtime client is in alpha state, and isn't recommended for general usage."
-# )
-
 # TODO: filter out automatically
 # Is this runc-specific?
 if "NOTIFY_SOCKET" in environ:
@@ -115,15 +111,15 @@ class Runc:
         if pass_fds:
             args.append(f"--preserve-fds={pass_fds}")
 
-        proc = self._run(
+        p = self._run(
             "create",
             *args,
             id,
             pass_fds=tuple(range(3, 3 + pass_fds)) if pass_fds is not None else (),
             stdin=PIPE,
         )
-
-        return OpenIO(proc.stdin, proc.stdout, proc.stderr)  # type: ignore # TODO: IO
+        errors.handle(p)
+        return OpenIO(p.stdin, p.stdout, p.stderr)  # type: ignore # TODO: IO
 
     def start(self, id: str) -> None:
         self._run("start", id)
@@ -136,7 +132,7 @@ class Runc:
         p = self._run("stop", id)
         errors.handle(p)
 
-    def delete(self, id: str, force: bool | None = default(False)) -> None:
+    def delete(self, id: str, force: bool = False) -> None:
         args = ["--force"] if force else []
         p = self._run("delete", *args, id)
         errors.handle(p)
