@@ -15,9 +15,6 @@ from pyoci.runtime.config.process import Process
 
 
 class Container(Struct, SimpleJsonMixin):
-    if not TYPE_CHECKING:
-        ociVersion: str = __oci_version__
-
     process: Process | Unset = UNSET
     mounts: Sequence[Mount] | Unset = UNSET
     hostname: str | Unset = UNSET
@@ -32,3 +29,6 @@ class Container(Struct, SimpleJsonMixin):
 
     hooks: Hooks | Unset = UNSET
     annotations: Annotations | Unset = UNSET
+
+    if not TYPE_CHECKING:
+        ociVersion: str = __oci_version__

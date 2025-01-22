@@ -15,12 +15,6 @@ class ContentDescriptor(Struct):
     https://github.com/opencontainers/image-spec/blob/v1.1.0/descriptor.md
     """
 
-    if not TYPE_CHECKING:
-        # TODO: is this supposed to be static?
-        mediaType: Literal[OciMediaType.content_descriptor] = (
-            OciMediaType.content_descriptor
-        )
-
     size: Int64  # in bytes
     digest: Digest
 
@@ -28,6 +22,12 @@ class ContentDescriptor(Struct):
     data: Data | Unset = UNSET
     artifactType: MediaType | Unset = UNSET
     annotations: Annotations | Unset = UNSET
+
+    if not TYPE_CHECKING:
+        # TODO: is this supposed to be static?
+        mediaType: Literal[OciMediaType.content_descriptor] = (
+            OciMediaType.content_descriptor
+        )
 
 
 class Platform(Struct):

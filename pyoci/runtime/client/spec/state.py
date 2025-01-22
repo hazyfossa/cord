@@ -14,8 +14,8 @@ class State(Struct):
     status: Status
     bundle: str
 
-    if not TYPE_CHECKING:
-        ociVersion: str = __oci_version__
-
     pid: Annotated[int, Meta(ge=0)] | Unset = UNSET
     annotations: Annotations | Unset = UNSET
+
+    if not TYPE_CHECKING:
+        ociVersion: str = __oci_version__

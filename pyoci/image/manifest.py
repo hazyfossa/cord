@@ -13,10 +13,10 @@ class ImageManifest(Struct, SimpleJsonMixin):
     config: ContentDescriptor
     layers: Sequence[ContentDescriptor]
 
-    if not TYPE_CHECKING:
-        schemaVersion: Literal[2] = 2
-        mediaType: Literal[OciMediaType.image_manifest] = OciMediaType.image_manifest
-
     artifactType: MediaType | Unset = UNSET
     subject: ContentDescriptor | Unset = UNSET
     annotations: Annotations | Unset = UNSET
+
+    if not TYPE_CHECKING:
+        schemaVersion: Literal[2] = 2
+        mediaType: Literal[OciMediaType.image_manifest] = OciMediaType.image_manifest
