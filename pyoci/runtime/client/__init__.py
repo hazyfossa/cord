@@ -122,7 +122,8 @@ class Runc:
         return OpenIO(p.stdin, p.stdout, p.stderr)  # type: ignore # TODO: IO
 
     def start(self, id: str) -> None:
-        self._run("start", id)
+        p = self._run("start", id)
+        errors.handle(p)
 
     def pause(self, id: str) -> None:
         p = self._run("pause", id)

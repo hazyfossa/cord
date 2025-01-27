@@ -23,12 +23,14 @@ class ContentDescriptor(Struct):
     artifactType: MediaType | Unset = UNSET
     annotations: Annotations | Unset = UNSET
 
-    if not TYPE_CHECKING:
-        # TODO: is this supposed to be static?
-        mediaType: Literal[OciMediaType.content_descriptor] = (
-            OciMediaType.content_descriptor
-        )
+    mediaType: str = OciMediaType.content_descriptor
 
+
+# This is a static pre-calculated value, as empty descriptors are so common for artifacts,
+# that it'll probably need to be calculated on each import anyway
+_EMPTY_DIGEST = "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a" 
+
+EmptyDescriptor = ContentDescriptor(size=2, data=b"{}", digest=_EMPTY_DIGEST, mediaType=OciMediaType.empty)
 
 class Platform(Struct):
     architecture: str
@@ -42,3 +44,7 @@ class Platform(Struct):
 # NOTE: Not part of the specification, used here for stronger typing
 class ManifestDescriptor(ContentDescriptor):
     platform: Platform | Unset = UNSET
+
+# TODO: consider typed classes, one per descriptor type. ConfigDescriptor, Layer, etc.
+# Or, maybe, only get instances of ContentDescriptor's from relevant classes. So, ImageConfig.descriptor()
+# In that case, we'll need make those structs generic over mediaType and annotate the descriptor fields with DescriptorFor[...]
