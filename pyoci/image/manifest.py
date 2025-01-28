@@ -6,15 +6,15 @@ from typing import TYPE_CHECKING, Literal
 from pyoci.base_types import Annotations
 from pyoci.common import UNSET, SimpleJsonMixin, Struct, Unset
 from pyoci.image.const import MediaType, OciMediaType
-from pyoci.image.descriptor import ContentDescriptor
+from pyoci.image.descriptor import Descriptor
 
 
 class ImageManifest(Struct, SimpleJsonMixin):
-    config: ContentDescriptor
-    layers: Sequence[ContentDescriptor]
+    config: Descriptor
+    layers: Sequence[Descriptor]
 
     artifactType: MediaType | Unset = UNSET
-    subject: ContentDescriptor | Unset = UNSET
+    subject: Descriptor | Unset = UNSET
     annotations: Annotations | Unset = UNSET
 
     if not TYPE_CHECKING:

@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Literal
 
 from pyoci.common import UNSET, SimpleJsonMixin, Struct, Unset
-from pyoci.image.descriptor import ContentDescriptor, ManifestDescriptor
+from pyoci.image.descriptor import Descriptor, ManifestDescriptor
 from pyoci.image.const import MediaType, OciMediaType
 
 
@@ -9,7 +9,7 @@ class Index(Struct, SimpleJsonMixin):
     manifests: list[ManifestDescriptor]
 
     artifactType: MediaType | Unset = UNSET
-    subject: ContentDescriptor | Unset = UNSET
+    subject: Descriptor | Unset = UNSET
     annotations: dict[str, str] | Unset = UNSET
 
     if not TYPE_CHECKING:

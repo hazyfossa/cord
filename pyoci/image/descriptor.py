@@ -1,16 +1,15 @@
 from collections.abc import Sequence
-from typing import TYPE_CHECKING, Literal
+from typing import Self
 
 from msgspec import field
 
-
 from pyoci.base_types import Annotations, Data, Int64
 from pyoci.common import UNSET, Struct, Unset
-from pyoci.image.const import MediaType, OciMediaType
+from pyoci.image.const import Architecture, MediaType, OciMediaType, Os
 from pyoci.image.digest import Digest
 
 
-class ContentDescriptor(Struct):
+class Descriptor(Struct):
     """
     https://github.com/opencontainers/image-spec/blob/v1.1.0/descriptor.md
     """
@@ -26,15 +25,27 @@ class ContentDescriptor(Struct):
     mediaType: str = OciMediaType.content_descriptor
 
 
+# class DescriptorMixin(Struct):
+#     mediaType: str
+
+#     @property
+#     def descriptor(self) -> ContentDescriptor: ...
+
+
 # This is a static pre-calculated value, as empty descriptors are so common for artifacts,
 # that it'll probably need to be calculated on each import anyway
-_EMPTY_DIGEST = "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a" 
+_EMPTY_DIGEST = (
+    "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+)
 
-EmptyDescriptor = ContentDescriptor(size=2, data=b"{}", digest=_EMPTY_DIGEST, mediaType=OciMediaType.empty)
+EmptyDescriptor = Descriptor(
+    size=2, data=b"{}", digest=_EMPTY_DIGEST, mediaType=OciMediaType.empty
+)
+
 
 class Platform(Struct):
-    architecture: str
-    os: str
+    architecture: Architecture
+    os: Os
     os_version: str | Unset = field(name="os.version", default=UNSET)
     # TODO: are there any well-known values for os features?
     os_features: list[str] | Unset = field(name="os.features", default=UNSET)
@@ -42,8 +53,9 @@ class Platform(Struct):
 
 
 # NOTE: Not part of the specification, used here for stronger typing
-class ManifestDescriptor(ContentDescriptor):
+class ManifestDescriptor(Descriptor):
     platform: Platform | Unset = UNSET
+
 
 # TODO: consider typed classes, one per descriptor type. ConfigDescriptor, Layer, etc.
 # Or, maybe, only get instances of ContentDescriptor's from relevant classes. So, ImageConfig.descriptor()

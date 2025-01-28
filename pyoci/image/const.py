@@ -1,4 +1,4 @@
-from enum import StrEnum
+from enum import StrEnum, auto
 from typing import Annotated
 from msgspec import Meta, field
 from pyoci.common import Struct, Unset, UNSET
@@ -26,22 +26,77 @@ class OciMediaType(StrEnum):
 # fmt: on
 
 
-def annotation(name: str) -> Unset:
-    return field(name=f"org.opencontainers.image.annotation.{name}", default=UNSET)
+def _image_annotation(key: str) -> Unset:
+    return field(name=f"org.opencontainers.image.annotation.{key}", default=UNSET)
 
 
-class ImageAnnotation(Struct):
-    created: str | Unset = annotation("created")
-    authors: str | Unset = annotation("authors")
-    url: str | Unset = annotation("url")
-    documentation: str | Unset = annotation("documentation")
-    source: str | Unset = annotation("source")
-    version: str | Unset = annotation("version")
-    revision: str | Unset = annotation("revision")
-    vendor: str | Unset = annotation("vendor")
-    licenses: str | Unset = annotation("licenses")
-    ref_name: str | Unset = annotation("ref.name")
-    title: str | Unset = annotation("title")
-    description: str | Unset = annotation("description")
-    base_image_digest: str | Unset = annotation("base.digest")
-    base_image_name: str | Unset = annotation("base.name")
+class ImageAnnotations(Struct):
+    created: str | Unset = _image_annotation("created")
+    authors: str | Unset = _image_annotation("authors")
+    url: str | Unset = _image_annotation("url")
+    documentation: str | Unset = _image_annotation("documentation")
+    source: str | Unset = _image_annotation("source")
+    version: str | Unset = _image_annotation("version")
+    revision: str | Unset = _image_annotation("revision")
+    vendor: str | Unset = _image_annotation("vendor")
+    licenses: str | Unset = _image_annotation("licenses")
+    ref_name: str | Unset = _image_annotation("ref.name")
+    title: str | Unset = _image_annotation("title")
+    description: str | Unset = _image_annotation("description")
+    base_image_digest: str | Unset = _image_annotation("base.digest")
+    base_image_name: str | Unset = _image_annotation("base.name")
+
+
+def _runtime_annotation(key: str) -> Unset:
+    return field(name=f"org.opencontainers.image.{key}", default=UNSET)
+
+
+# TODO
+class RuntimeConfigAnnotations(Struct):
+    os: str | Unset = _runtime_annotation("os")
+    architecture: str | Unset = _runtime_annotation("architecture")
+
+
+class Architecture(StrEnum):
+    """
+    GOARCH
+    https://golang.org/doc/install/source#environment
+    """
+
+    arm = auto()
+    arm64 = auto()
+    amd64 = auto()
+    i386 = auto()
+    wasm = auto()
+    loong64 = auto()
+    mips = auto()
+    mipsle = auto()
+    mips64 = auto()
+    mips64le = auto()
+    ppc64 = auto()
+    ppc64le = auto()
+    riscv64 = auto()
+    s390x = auto()
+
+
+class Os(StrEnum):
+    """
+    GOOS
+    https://golang.org/doc/install/source#environment
+    """
+
+    aix = auto()
+    android = auto()
+    darwin = auto()
+    dragonfly = auto()
+    freebsd = auto()
+    illumos = auto()
+    ios = auto()
+    js = auto()
+    linux = auto()
+    netbsd = auto()
+    openbsd = auto()
+    plan9 = auto()
+    solaris = auto()
+    wasip1 = auto()
+    windows = auto()
