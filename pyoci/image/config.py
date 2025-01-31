@@ -1,10 +1,9 @@
 from datetime import datetime
 
-from msgspec import Struct
-
-from pyoci.common import UNSET, Unset
+from msgspec import field
+from pyoci.common import UNSET, Unset, Struct
 from pyoci.image.platform import Platform
-from pyoci.image.digest import Digest
+from pyoci.image.digest import Digest, DigestStr
 
 # TODO: allow specifying other templates if we dont merge this with the main structs
 from pyoci.runtime.config.templates.default import (
@@ -15,7 +14,7 @@ from pyoci.runtime.config.templates.default import (
 
 class RootFS(Struct):
     type: str
-    diff_ids: list[Digest]
+    diff_ids: list[DigestStr]
 
 
 class History(Struct):

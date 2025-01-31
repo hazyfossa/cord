@@ -1,12 +1,13 @@
 from collections.abc import Sequence
-from typing import Self
 
+# TODO: consider using pathlib
+from os import stat
 
 from pyoci.base_types import Annotations, Data, Int64
 from pyoci.common import UNSET, Struct, Unset
-from pyoci.image.well_known import MediaType, OciMediaType
-from pyoci.image.digest import Digest
+from pyoci.image.digest import Digest, DigestStr
 from pyoci.image.platform import Platform
+from pyoci.image.well_known import MediaType, OciMediaType
 
 
 class Descriptor(Struct):
@@ -15,7 +16,7 @@ class Descriptor(Struct):
     """
 
     size: Int64  # in bytes
-    digest: Digest
+    digest: DigestStr
 
     urls: Sequence[str] | Unset = UNSET
     data: Data | Unset = UNSET
@@ -23,6 +24,19 @@ class Descriptor(Struct):
     annotations: Annotations | Unset = UNSET
 
     mediaType: str = OciMediaType.content_descriptor
+
+    def validate_data(self, data: bytes) -> bool:
+        descriptor_digest = Digest.from_str(self.digest)
+        data_digest = Digest.from_bytes(descriptor_digest.algorithm, data)
+
+        return descriptor_digest == data_digest and len(data) == self.size
+
+    # TODO: consider dynamic buffer sizes based on descriptor size
+    def validate_file(self, path: str, buf_size: int = 4096) -> bool:
+        descriptor_digest = Digest.from_str(self.digest)
+        data_digest = Digest.from_file(descriptor_digest.algorithm, path, buf_size)
+
+        return descriptor_digest == data_digest and self.size == stat(path).st_size
 
 
 # class DescriptorMixin(Struct):
