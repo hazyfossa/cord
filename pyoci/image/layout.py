@@ -66,8 +66,7 @@ class OCILayout:
         path = self.blob_root / digest.algorithm / digest.data
         return path.open("rb")  # type: ignore # implicit cast
 
-    def write_blob(self, descriptor: Descriptor, blob: BinaryIO) -> None:
-        digest = Digest.from_str(descriptor.digest)
+    def write_blob(self, digest: Digest, blob: BinaryIO) -> None:
         path = self.blob_root / digest.algorithm
 
         if digest.algorithm not in self.algs_used:
