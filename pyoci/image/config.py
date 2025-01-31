@@ -3,7 +3,7 @@ from datetime import datetime
 from msgspec import Struct
 
 from pyoci.common import UNSET, Unset
-from pyoci.image.descriptor import Platform
+from pyoci.image.platform import Platform
 from pyoci.image.digest import Digest
 
 # TODO: allow specifying other templates if we dont merge this with the main structs

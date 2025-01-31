@@ -1,12 +1,12 @@
 from collections.abc import Sequence
 from typing import Self
 
-from msgspec import field
 
 from pyoci.base_types import Annotations, Data, Int64
 from pyoci.common import UNSET, Struct, Unset
-from pyoci.image.const import Architecture, MediaType, OciMediaType, Os
+from pyoci.image.const import MediaType, OciMediaType
 from pyoci.image.digest import Digest
+from pyoci.image.platform import Platform
 
 
 class Descriptor(Struct):
@@ -41,15 +41,6 @@ _EMPTY_DIGEST = (
 EmptyDescriptor = Descriptor(
     size=2, data=b"{}", digest=_EMPTY_DIGEST, mediaType=OciMediaType.empty
 )
-
-
-class Platform(Struct):
-    architecture: Architecture | str
-    os: Os | str
-    os_version: str | Unset = field(name="os.version", default=UNSET)
-    # TODO: are there any well-known values for os features?
-    os_features: list[str] | Unset = field(name="os.features", default=UNSET)
-    variant: str | Unset = UNSET
 
 
 # NOTE: Not part of the specification, used here for stronger typing

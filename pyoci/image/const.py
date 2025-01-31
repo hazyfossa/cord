@@ -1,4 +1,4 @@
-from enum import StrEnum, auto
+from enum import StrEnum
 from typing import Annotated
 from msgspec import Meta, field
 from pyoci.common import Struct, Unset, UNSET
@@ -55,48 +55,3 @@ def _runtime_annotation(key: str) -> Unset:
 class RuntimeConfigAnnotations(Struct):
     os: str | Unset = _runtime_annotation("os")
     architecture: str | Unset = _runtime_annotation("architecture")
-
-
-class Architecture(StrEnum):
-    """
-    GOARCH
-    https://golang.org/doc/install/source#environment
-    """
-
-    arm = auto()
-    arm64 = auto()
-    amd64 = auto()
-    i386 = auto()
-    wasm = auto()
-    loong64 = auto()
-    mips = auto()
-    mipsle = auto()
-    mips64 = auto()
-    mips64le = auto()
-    ppc64 = auto()
-    ppc64le = auto()
-    riscv64 = auto()
-    s390x = auto()
-
-
-class Os(StrEnum):
-    """
-    GOOS
-    https://golang.org/doc/install/source#environment
-    """
-
-    aix = auto()
-    android = auto()
-    darwin = auto()
-    dragonfly = auto()
-    freebsd = auto()
-    illumos = auto()
-    ios = auto()
-    js = auto()
-    linux = auto()
-    netbsd = auto()
-    openbsd = auto()
-    plan9 = auto()
-    solaris = auto()
-    wasip1 = auto()
-    windows = auto()
