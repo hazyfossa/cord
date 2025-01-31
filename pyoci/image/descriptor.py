@@ -44,8 +44,8 @@ EmptyDescriptor = Descriptor(
 
 
 class Platform(Struct):
-    architecture: Architecture
-    os: Os
+    architecture: Architecture | str
+    os: Os | str
     os_version: str | Unset = field(name="os.version", default=UNSET)
     # TODO: are there any well-known values for os features?
     os_features: list[str] | Unset = field(name="os.features", default=UNSET)
