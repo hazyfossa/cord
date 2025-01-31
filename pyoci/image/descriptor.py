@@ -4,7 +4,7 @@ from typing import Self
 
 from pyoci.base_types import Annotations, Data, Int64
 from pyoci.common import UNSET, Struct, Unset
-from pyoci.image.const import MediaType, OciMediaType
+from pyoci.image.well_known import MediaType, OciMediaType
 from pyoci.image.digest import Digest
 from pyoci.image.platform import Platform
 

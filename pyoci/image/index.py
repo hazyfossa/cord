@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Literal
 
 from pyoci.common import UNSET, SimpleJsonMixin, Struct, Unset
 from pyoci.image.descriptor import Descriptor, ManifestDescriptor
-from pyoci.image.const import MediaType, OciMediaType
+from pyoci.image.well_known import MediaType, OciMediaType
 
 
 class Index(Struct, SimpleJsonMixin):

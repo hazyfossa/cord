@@ -1,6 +1,6 @@
 from enum import StrEnum
 from typing import Annotated
-from msgspec import Meta, field
+from msgspec import Meta, defstruct, field
 from pyoci.common import Struct, Unset, UNSET
 
 MediaType = Annotated[

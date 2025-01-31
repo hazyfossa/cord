@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Literal
 
 from pyoci.base_types import Annotations
 from pyoci.common import UNSET, SimpleJsonMixin, Struct, Unset
-from pyoci.image.const import MediaType, OciMediaType
+from pyoci.image.well_known import MediaType, OciMediaType
 from pyoci.image.descriptor import Descriptor
 
 
