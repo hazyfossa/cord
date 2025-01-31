@@ -1,9 +1,12 @@
 from pathlib import Path
-from typing import Iterable, Literal
+from typing import IO, BinaryIO, Literal
+
+from msgspec import ValidationError, json
+
 from pyoci.common import Struct
+from pyoci.image.descriptor import Descriptor, ManifestDescriptor
+from pyoci.image.digest import Digest
 from pyoci.image.manifest import Index
-from pyoci.image.descriptor import Descriptor
-from msgspec import json, ValidationError
 
 
 # TODO: Allow accessing undefined fields, or consider unstructured decoding
@@ -31,8 +34,45 @@ def read_layout_part[T](layout_root: Path, part: str, type: T) -> T:
 class OCILayout:
     def __init__(self, path: Path | str) -> None:
         self.path = Path(path)
+        self.blob_root = self.path / "blobs"
 
-        self.marker = read_layout_part(self.path, "oci-layout", LayoutFile)
+        self.meta = read_layout_part(self.path, "oci-layout", LayoutFile)
         self.index = read_layout_part(self.path, "index.json", Index)
 
-    def upload_blob(self, descriptor: Descriptor, blob: Iterable[bytes]) -> None: ...
+        if not self.blob_root.exists():
+            raise LayoutError(self.path, "'blobs' directory not found")
+
+        # TODO: check if extra memory usage is worth the speedup
+        # Alternative would be to do (self.blob_root / alg).mkdir(exist_ok=True) on each blob upload
+        self.algs_used = set()
+
+    @classmethod
+    def make(cls, path: Path | str, exists_ok: bool = False) -> None:
+        path = Path(path)
+        marker_file = path / "oci-layout"
+
+        if marker_file.exists():
+            if not exists_ok:
+                raise ValueError(f"{path} is already an OCI layout")
+
+            return
+
+        empty_index = Index(manifests=[])
+        (path / "oci-layout").write_bytes(json.encode(LayoutFile()))
+        (path / "index.json").write_bytes(json.encode(empty_index))
+        (path / "blobs").mkdir()
+
+    def read_blob(self, digest: Digest) -> IO[bytes]:
+        path = self.blob_root / digest.algorithm / digest.data
+        return path.open("rb")  # type: ignore # implicit cast
+
+    def write_blob(self, descriptor: Descriptor, blob: BinaryIO) -> None:
+        digest = Digest.from_str(descriptor.digest)
+        path = self.blob_root / digest.algorithm
+
+        if digest.algorithm not in self.algs_used:
+            path.mkdir()
+            self.algs_used.add(digest.algorithm)
+
+        # TODO: optimize memory usage
+        path.write_bytes(blob.read())

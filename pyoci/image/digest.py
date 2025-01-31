@@ -11,6 +11,7 @@ DigestStr = Annotated[
 ]
 
 
+# NOTE: This is mostly a wrapper around standart library hashlib
 class Digest:
     def __init__(self, algorithm: str, data: str) -> None:
         self.algorithm = algorithm

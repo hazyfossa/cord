@@ -30,6 +30,7 @@ def _image_annotation(key: str) -> Unset:
     return field(name=f"org.opencontainers.image.annotation.{key}", default=UNSET)
 
 
+# TODO: consider using an Enum, not a Struct
 class ImageAnnotations(Struct):
     created: str | Unset = _image_annotation("created")
     authors: str | Unset = _image_annotation("authors")

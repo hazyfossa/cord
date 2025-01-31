@@ -3,6 +3,8 @@ from collections.abc import Sequence
 # TODO: consider using pathlib
 from os import stat
 
+from msgspec import field
+
 from pyoci.base_types import Annotations, Data, Int64
 from pyoci.common import UNSET, Struct, Unset
 from pyoci.image.digest import Digest, DigestStr
@@ -19,7 +21,7 @@ class Descriptor(Struct):
     digest: DigestStr
 
     urls: Sequence[str] | Unset = UNSET
-    data: Data | Unset = UNSET
+    embedded_data: Data | Unset = field(name="data", default=UNSET)
     artifactType: MediaType | Unset = UNSET
     annotations: Annotations | Unset = UNSET
 
@@ -53,7 +55,7 @@ _EMPTY_DIGEST = (
 )
 
 EmptyDescriptor = Descriptor(
-    size=2, data=b"{}", digest=_EMPTY_DIGEST, mediaType=OciMediaType.empty
+    size=2, embedded_data=b"{}", digest=_EMPTY_DIGEST, mediaType=OciMediaType.empty
 )
 
 

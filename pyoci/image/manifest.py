@@ -23,6 +23,8 @@ class Manifest(Struct, SimpleJsonMixin):
 
 
 class Index(Struct, SimpleJsonMixin):
+    # TODO: manifests can contain index descriptors. Do we consider index descriptors instances of ManifestDescriptor?
+    # I.e. is "platform" valid on an index descriptor?
     manifests: list[ManifestDescriptor]
 
     artifactType: MediaType | Unset = UNSET
