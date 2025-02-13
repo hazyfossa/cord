@@ -1,8 +1,5 @@
 from collections.abc import Sequence
 
-# TODO: consider using pathlib
-from os import stat
-
 from msgspec import field
 
 from pyoci.base_types import Annotations, Data, Int64
@@ -10,6 +7,25 @@ from pyoci.common import UNSET, Struct, Unset
 from pyoci.image.digest import Digest, DigestStr
 from pyoci.image.platform import Platform
 from pyoci.image.well_known import MediaType, OciMediaType
+
+
+class DescriptorValidationError(Exception): ...
+
+
+class DescriptorSizeMismatch(DescriptorValidationError):
+    def __init__(self, expected: int, actual: int) -> None:
+        # TODO: human readable sizes
+        super().__init__(
+            f"Data size mismatch: expected (from descriptor) {expected}b, got {actual}b"
+        )
+
+
+class DescriptorDigestMismatch(DescriptorValidationError):
+    def __init__(self, expected: Digest, actual: Digest) -> None:
+        # TODO: human readable sizes
+        super().__init__(
+            f"Data digest mismatch: expected (from descriptor) '{expected}', got '{actual}'"
+        )
 
 
 class Descriptor(Struct):
@@ -27,18 +43,25 @@ class Descriptor(Struct):
 
     mediaType: str = OciMediaType.content_descriptor
 
-    def validate_data(self, data: bytes) -> bool:
+    def validate(self, data: bytes | Digest, size: int) -> None:
         descriptor_digest = Digest.from_str(self.digest)
-        data_digest = Digest.from_bytes(descriptor_digest.algorithm, data)
 
-        return descriptor_digest == data_digest and len(data) == self.size
+        if not isinstance(data, Digest):
+            data = Digest.from_bytes(data, algorithm=descriptor_digest.algorithm)
+        elif data.algorithm != descriptor_digest.algorithm:
+            raise ValueError(
+                "Cannot validate against a digest using a different algorithm"
+            )
 
-    # TODO: consider dynamic buffer sizes based on descriptor size
-    def validate_file(self, path: str, buf_size: int = 4096) -> bool:
-        descriptor_digest = Digest.from_str(self.digest)
-        data_digest = Digest.from_file(descriptor_digest.algorithm, path, buf_size)
+        data_digest = data  # NOTE: renaming
 
-        return descriptor_digest == data_digest and self.size == stat(path).st_size
+        if descriptor_digest != data_digest:
+            raise DescriptorDigestMismatch(
+                expected=descriptor_digest, actual=data_digest
+            )
+
+        if size != self.size:
+            raise DescriptorSizeMismatch(expected=self.size, actual=size)
 
 
 # class DescriptorMixin(Struct):
@@ -48,7 +71,7 @@ class Descriptor(Struct):
 #     def descriptor(self) -> ContentDescriptor: ...
 
 
-# This is a static pre-calculated value, as empty descriptors are so common for artifacts,
+# NOTE: This is a static pre-calculated value, as empty descriptors are so common for artifacts,
 # that it'll probably need to be calculated on each import anyway
 _EMPTY_DIGEST = (
     "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
