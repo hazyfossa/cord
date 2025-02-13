@@ -13,20 +13,20 @@ DigestStr = Annotated[
 
 # NOTE: This is mostly a wrapper around standart library hashlib
 class Digest:
-    def __init__(self, algorithm: str, data: str) -> None:
+    def __init__(self, algorithm: str, value: str) -> None:
         self.algorithm = algorithm
-        self.data = data
+        self.value = value
 
     @classmethod
     def from_str(cls, digest: DigestStr) -> Self:
         return cls(*digest.split(":", 1))
 
     def __str__(self) -> DigestStr:
-        return f"{self.algorithm}:{self.data}"
+        return f"{self.algorithm}:{self.value}"
 
     def __eq__(self, digest) -> bool:
         assert isinstance(digest, Digest)
-        return self.algorithm == digest.algorithm and self.data == digest.data
+        return self.algorithm == digest.algorithm and self.value == digest.value
 
     @classmethod
     def from_bytes(cls, algorithm: str, data: bytes) -> Self:

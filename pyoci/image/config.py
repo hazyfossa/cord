@@ -7,7 +7,7 @@ from pyoci.image.digest import Digest, DigestStr
 
 # TODO: allow specifying other templates if we dont merge this with the main structs
 from pyoci.runtime.config.templates.default import (
-    Container as Config,
+    ContainerConfig as Config,
     Process,
 )
 

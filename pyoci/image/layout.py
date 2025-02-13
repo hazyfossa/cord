@@ -63,7 +63,7 @@ class OCILayout:
         (path / "blobs").mkdir()
 
     def read_blob(self, digest: Digest) -> IO[bytes]:
-        path = self.blob_root / digest.algorithm / digest.data
+        path = self.blob_root / digest.algorithm / digest.value
         return path.open("rb")  # type: ignore # implicit cast
 
     def write_blob(self, digest: Digest, blob: BinaryIO) -> None:
