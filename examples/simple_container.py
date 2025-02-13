@@ -1,4 +1,4 @@
-from pyoci.runtime.config.templates.default import Container, Process
+from pyoci.runtime.config.templates.default import ContainerConfig, Process
 from pyoci.runtime.client import Runc
 from io import TextIOWrapper
 
@@ -11,7 +11,7 @@ BUNDLE = "./test/container/"
 
 # Define all required parameters for the container
 process = Process(args=["/bin/hostname"], terminal=False)
-c = Container(process, hostname="pyoci-test-container")
+c = ContainerConfig(process, hostname="pyoci-test-container")
 
 # Write the config. The filename should always be config.json per the specification.
 with open("./test/container/config.json", "wb") as f:

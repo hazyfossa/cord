@@ -4,7 +4,7 @@ from typing import Any
 from msgspec import field
 
 from pyoci.common import Struct, Unset
-from pyoci.runtime.config import Container as BaseContainer
+from pyoci.runtime.config import ContainerConfig as BaseContainerConfig
 from pyoci.runtime.config.filesystem import Mount, Root
 from pyoci.runtime.config.platform.linux import (
     Linux as BaseLinux,
@@ -173,7 +173,7 @@ class Linux(BaseLinux, Struct):
     resources: BaseResources | Unset = field(default_factory=lambda: Resources())
 
 
-class Container(BaseContainer, Struct):
+class ContainerConfig(BaseContainerConfig, Struct):
     root: Root | Unset = field(default_factory=lambda: Root(path=rootfs))
     mounts: Sequence[Mount] | Unset = field(default_factory=lambda: mounts)
     user: User | Unset = field(default_factory=lambda: root_user)

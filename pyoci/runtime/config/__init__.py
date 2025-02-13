@@ -14,7 +14,7 @@ from pyoci.runtime.config.platform.zos import Zos
 from pyoci.runtime.config.process import Process
 
 
-class Container(Struct, SimpleJsonMixin):
+class ContainerConfig(Struct, SimpleJsonMixin):
     process: Process | Unset = UNSET
     mounts: Sequence[Mount] | Unset = UNSET
     hostname: str | Unset = UNSET
