@@ -5,7 +5,7 @@ from msgspec import ValidationError, json
 
 from pyoci.common import Struct
 from pyoci.image.descriptor import Descriptor, ManifestDescriptor
-from pyoci.image.digest import Digest
+from pyoci.image.digest import Digest, DEFAULT_ALGORITHM
 from pyoci.image.manifest import Index
 
 
@@ -62,20 +62,24 @@ class OCILayout:
         (path / "index.json").write_bytes(json.encode(empty_index))
         (path / "blobs").mkdir()
 
-    def has_blob(self, digest: Digest) -> bool:
-        path = self.blob_root / digest.algorithm / digest.value
-        return path.exists()
+    def blob(self, digest: Digest) -> Path:
+        # TODO: return a modified object with a .create method, so new_blob is redundant
+        return self.blob_root / digest.algorithm / digest.value
 
-    def read_blob(self, digest: Digest) -> IO[bytes]:
-        path = self.blob_root / digest.algorithm / digest.value
-        return path.open("rb")  # type: ignore # implicit cast
-
-    def write_blob(self, digest: Digest, blob: BinaryIO) -> None:
-        path = self.blob_root / digest.algorithm
+    def new_blob(self, digest: Digest, overwrite_ok: bool = False) -> Path:
+        alg_path = self.blob_root / digest.algorithm
 
         if digest.algorithm not in self.algs_used:
-            path.mkdir()
+            alg_path.mkdir()
             self.algs_used.add(digest.algorithm)
 
-        # TODO: optimize memory usage
-        path.write_bytes(blob.read())
+        return alg_path / digest.value
+
+    def write_struct(
+        self, struct: Struct, digest_algorithm: str = DEFAULT_ALGORITHM
+    ) -> None:
+        content = json.encode(struct)
+        digest = Digest.from_bytes(content, digest_algorithm)
+        blob = self.new_blob(digest)
+
+        blob.write_bytes(content)
