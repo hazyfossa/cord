@@ -62,6 +62,10 @@ class OCILayout:
         (path / "index.json").write_bytes(json.encode(empty_index))
         (path / "blobs").mkdir()
 
+    def has_blob(self, digest: Digest) -> bool:
+        path = self.blob_root / digest.algorithm / digest.value
+        return path.exists()
+
     def read_blob(self, digest: Digest) -> IO[bytes]:
         path = self.blob_root / digest.algorithm / digest.value
         return path.open("rb")  # type: ignore # implicit cast
