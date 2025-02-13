@@ -3,6 +3,8 @@ from typing import Annotated, Self
 
 from msgspec import Meta
 
+DEFAULT_ALGORITHM = "sha256"
+
 DigestStr = Annotated[
     str,
     Meta(
@@ -29,12 +31,14 @@ class Digest:
         return self.algorithm == digest.algorithm and self.value == digest.value
 
     @classmethod
-    def from_bytes(cls, algorithm: str, data: bytes) -> Self:
+    def from_bytes(cls, data: bytes, algorithm: str = DEFAULT_ALGORITHM) -> Self:
         digest = new_hash(algorithm, data).hexdigest()
         return cls(algorithm, digest)
 
     @classmethod
-    def from_file(cls, algorithm: str, path: str, buf_size: int = 4096) -> Self:
+    def from_file(
+        cls, path: str, algorithm: str = DEFAULT_ALGORITHM, buf_size: int = 4096
+    ) -> Self:
         digest = new_hash(algorithm)
         buf = bytearray(buf_size)
         view = memoryview(buf)
