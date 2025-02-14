@@ -1,12 +1,12 @@
 from pathlib import Path
-from typing import IO, BinaryIO, Literal
+from typing import Literal
 
 from msgspec import ValidationError, json
 
-from pyoci.common import Struct
-from pyoci.image.descriptor import Descriptor, ManifestDescriptor
-from pyoci.image.digest import Digest, DEFAULT_ALGORITHM
-from pyoci.image.manifest import Index
+from pyoci.common import UNSET, Struct
+from pyoci.image.digest import DEFAULT_ALGORITHM, Digest
+from pyoci.image.manifest import Index, Manifest, ManifestDescriptor
+from pyoci.image.well_known import ImageAnnotation
 
 
 # TODO: Allow accessing undefined fields, or consider unstructured decoding
@@ -42,6 +42,8 @@ class OCILayout:
         if not self.blob_root.exists():
             raise LayoutError(self.path, "'blobs' directory not found")
 
+        self.tags = self._populate_tags()
+
         # TODO: check if extra memory usage is worth the speedup
         # Alternative would be to do (self.blob_root / alg).mkdir(exist_ok=True) on each blob upload
         self.algs_used = set()
@@ -75,6 +77,11 @@ class OCILayout:
 
         return alg_path / digest.value
 
+    def read_manifest(self, tag: str) -> Manifest:
+        descriptor = self.tags[tag]
+        blob = self.blob(Digest.from_str(descriptor.digest)).read_bytes()
+        return json.decode(blob, type=Manifest)
+
     def write_struct(
         self, struct: Struct, digest_algorithm: str = DEFAULT_ALGORITHM
     ) -> None:
@@ -83,3 +90,22 @@ class OCILayout:
         blob = self.new_blob(digest)
 
         blob.write_bytes(content)
+
+    def _populate_tags(self) -> dict[str, ManifestDescriptor]:
+        manifests_by_tag = {}
+
+        for manifest_descriptor in self.index.manifests:
+            # TODO: typing
+            if manifest_descriptor.annotations is UNSET:
+                continue
+
+            tag: str | None = manifest_descriptor.annotations.get(  # type: ignore
+                ImageAnnotation.ref_name
+            )
+
+            if tag is None:
+                continue
+
+            manifests_by_tag[tag] = manifest_descriptor
+
+        return manifests_by_tag
