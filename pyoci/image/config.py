@@ -1,13 +1,12 @@
 from datetime import datetime
 
-from msgspec import field
-from pyoci.common import UNSET, Unset, Struct
+from pyoci.common import UNSET, Struct, Unset
+from pyoci.image.digest import DigestStr
 from pyoci.image.platform import Platform
-from pyoci.image.digest import Digest, DigestStr
 
 # TODO: allow specifying other templates if we dont merge this with the main structs
 from pyoci.runtime.config.templates.default import (
-    ContainerConfig as Config,
+    ContainerConfig,
     Process,
 )
 
@@ -52,7 +51,7 @@ class ImageConfig(
     Labels: dict[str, str] | Unset = UNSET
     StopSignal: str | Unset = UNSET
 
-    def to_default_container_config(self) -> Config:
+    def to_default_container_config(self) -> ContainerConfig:
         process = Process(
             cwd=self.WorkingDir or "/",  # TODO remove this non-spec default
             args=(self.Cmd or []) + (self.Entrypoint or []) or UNSET,

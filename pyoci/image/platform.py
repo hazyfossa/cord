@@ -1,6 +1,7 @@
-from enum import StrEnum, auto
 import platform
+from enum import StrEnum, auto
 from typing import Self
+
 from msgspec import field
 
 from pyoci.common import UNSET, Struct, Unset

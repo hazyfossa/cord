@@ -34,7 +34,7 @@ class Descriptor(Struct):
     """
 
     size: Int64  # in bytes
-    digest: DigestStr
+    digest: DigestStr  # TODO: Consider removing DigestStr as a type and converting automatically
 
     urls: Sequence[str] | Unset = UNSET
     embedded_data: Data | Unset = field(name="data", default=UNSET)
