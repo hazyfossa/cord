@@ -24,4 +24,4 @@ Data = Annotated[bytes, "Base64"]
 StringPointer = str | None
 
 MapStringObject = Mapping[str, Mapping[str, Any]]
-Annotations = Mapping[str, str]
+Annotations = dict[str, str]
