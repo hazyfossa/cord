@@ -17,6 +17,7 @@ class State(ListEntry):
     _rootfs: str | None = field(name="rootfs", default=None)
     systemd_scope: str | Unset = UNSET
 
+    # TODO: This may be wrong actually
     @property
     def rootfs(self) -> str | None:  # This exists so this mirrors the behaviour of runc
         if self._rootfs is not None:

@@ -167,8 +167,18 @@ class Runc:
         p = self._run("pause", id)
         errors.handle(p)
 
-    def stop(self, id: str) -> None:
-        p = self._run("stop", id)
+    def resume(self, id: str) -> None:
+        p = self._run("resume", id)
+        errors.handle(p)
+
+    def kill(
+        self,
+        id: str,
+        signal: str | None = default("SIGTERM"),
+        all: bool = False,
+    ) -> None:
+        args = ["--all"] if all else []
+        p = self._run("kill", *args, id, signal)
         errors.handle(p)
 
     def delete(self, id: str, force: bool = False) -> None:
@@ -195,7 +205,9 @@ class Runc:
     def features(self):
         p = self._run("features")
         errors.handle(p)
-        return json.decode(p.stdout.read(), type=Features)  # type: ignore # TODO: IO
+        d = p.stdout.read()
+        print(d)
+        return json.decode(d, type=Features)  # type: ignore # TODO: IO
 
     def update(self, id: str, new_constraints: Constraints):
         # TODO: use encode_into instead of BytesIO to save memory
