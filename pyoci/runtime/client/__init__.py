@@ -12,6 +12,7 @@ from pyoci.runtime.client.spec.features import Features
 from pyoci.runtime.client.specific.runc import State
 from pyoci.runtime.client.specific.runc.constraints import Constraints
 from pyoci.runtime.client.utils import OpenIO, default
+from pyoci.runtime.config.process import Process
 
 # TODO: filter out automatically
 # Is this runc-specific?
@@ -93,9 +94,9 @@ class Runc:
         bundle: str,
         console_socket: str | None = None,
         pid_file: str | None = None,
-        no_pivot: bool | None = default(False),
-        no_new_keyring: bool | None = default(False),
-        pass_fds: int | None = default(0),  # NOTE: renaming intentinally
+        no_pivot: bool | None = False,
+        no_new_keyring: bool | None = False,
+        pass_fds: int | None = None,  # NOTE: renaming intentinally
     ) -> OpenIO:
         args = []
         if bundle:
@@ -123,6 +124,38 @@ class Runc:
 
     def start(self, id: str) -> None:
         p = self._run("start", id)
+        errors.handle(p)
+
+    def exec(
+        self,
+        id: str,
+        process: Process,
+        console_socket: str | None = None,
+        pid_file: str | None = None,
+        detach: bool = False,
+        ignore_paused: bool = False,
+        pass_fds: int | None = None,  # NOTE: renaming intentinally
+    ):
+        args = []
+        if console_socket:
+            args.append(f"--console-socket={console_socket}")
+        if pid_file:
+            args.append(f"--pid-file={pid_file}")
+        if detach:
+            args.append("--detach")
+        if ignore_paused:
+            args.append("--ignore-paused")
+        if pass_fds:
+            args.append(f"--preserve-fds={pass_fds}")
+
+        p = self._run(
+            "exec",
+            *args,
+            "-p -",
+            id,
+            stdin=BytesIO(json.encode(process)),
+            pass_fds=tuple(range(3, 3 + pass_fds)) if pass_fds is not None else (),
+        )
         errors.handle(p)
 
     def pause(self, id: str) -> None:
@@ -158,7 +191,7 @@ class Runc:
         # TODO: use encode_into instead of BytesIO to save memory
         p = self._run(
             "update",
-            "-r -",  # NOTE: this is required for runc to read from stdin
+            "-r -",
             id,
             stdin=BytesIO(json.encode(new_constraints)),
         )
