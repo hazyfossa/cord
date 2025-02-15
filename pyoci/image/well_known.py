@@ -1,9 +1,7 @@
 from enum import StrEnum
 from typing import Annotated
+from msgspec import Meta
 
-from msgspec import Meta, field
-
-from pyoci.common import UNSET, Struct, Unset
 
 MediaType = Annotated[
     str,
@@ -39,19 +37,12 @@ class ImageAnnotation(StrEnum):
     vendor =            "org.opencontainers.image.annotation.vendor"
     licenses =          "org.opencontainers.image.annotation.licenses"
     ref_name =          "org.opencontainers.image.annotation.ref.name"
-    _title =             "org.opencontainers.image.annotation.title"
+    _title =            "org.opencontainers.image.annotation.title"
     description =       "org.opencontainers.image.annotation.description"
     base_image_digest = "org.opencontainers.image.annotation.base.digest"
     base_image_name =   "org.opencontainers.image.annotation.base.name"
 
-# fmt: on
 
-
-def _runtime_annotation(key: str) -> Unset:
-    return field(name=f"org.opencontainers.image.{key}", default=UNSET)
-
-
-# TODO
-class RuntimeConfigAnnotations(Struct):
-    os: str | Unset = _runtime_annotation("os")
-    architecture: str | Unset = _runtime_annotation("architecture")
+class RuntimeConfigAnnotation(StrEnum):
+    os =                "org.opencontainers.image.os"
+    architecture =      "org.opencontainers.image.architecture"
