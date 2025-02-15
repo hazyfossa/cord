@@ -1,5 +1,11 @@
-from pyoci.base_types import Uint64
-from pyoci.common import Struct, Unset, UNSET
+from pyoci.base_types import Int64, Uint16, Uint64
+from pyoci.common import UNSET, Struct, Unset
+
+
+class Hugetlb(Struct):
+    failcnt: Uint64
+    usage: Uint64 | Unset = UNSET
+    max: Uint64 | Unset = UNSET
 
 
 class BlkioEntry(Struct):
@@ -43,6 +49,23 @@ class Cpu(Struct):
     throttling: Throttling | Unset = UNSET
 
 
+class CPUSet(Struct):
+    cpu_exclusive: Uint64
+
+    mem_hardwall: Uint64
+    mem_exclusive: Uint64
+    memory_migrate: Uint64
+    memory_spread_page: Uint64
+    memory_spread_slab: Uint64
+    memory_pressure: Uint64
+
+    sched_load_balance: Uint64
+    sched_relax_domain_level: Int64
+
+    cpus: list[Uint16] | Unset = UNSET
+    mems: list[Uint16] | Unset = UNSET
+
+
 class MemoryEntry(Struct):
     failcnt: Uint64
     limit: Uint64
@@ -59,10 +82,45 @@ class Memory(Struct):
     raw: dict[str, Uint64] | Unset = UNSET
 
 
-class Hugetlb(Struct):
-    failcnt: Uint64
-    usage: Uint64 | Unset = UNSET
-    max: Uint64 | Unset = UNSET
+# NOTE: Intel RDT:
+
+
+class L3CacheInfo(Struct):
+    cbm_mask: str | Unset = UNSET
+    min_cbm_bits: Uint64 | Unset = UNSET
+    num_closids: Uint64 | Unset = UNSET
+
+
+class MemBwInfo(Struct):
+    bandwidth_gran: Uint64 | Unset = UNSET
+    delay_linear: Uint64 | Unset = UNSET
+    min_bandwidth: Uint64 | Unset = UNSET
+    num_closids: Uint64 | Unset = UNSET
+
+
+class MBMNumaNodeStats(Struct):
+    mbm_total_bytes: Uint64 | Unset = UNSET
+    mbm_local_bytes: Uint64 | Unset = UNSET
+
+
+class CMTNumaNodeStats(Struct):
+    llc_occupancy: Uint64 | Unset = UNSET
+
+
+class IntelRdt(Struct):
+    l3_cache_info: L3CacheInfo | Unset = UNSET
+    l3_cache_schema_root: str | Unset = UNSET
+    l3_cache_schema: str | Unset = UNSET
+
+    mem_bw_info: MemBwInfo | Unset = UNSET
+    mem_bw_schema_root: str | Unset = UNSET
+    mem_bw_schema: str | Unset = UNSET
+
+    mbm_stats: MBMNumaNodeStats | Unset = UNSET
+    cmt_stats: CMTNumaNodeStats | Unset = UNSET
+
+
+#
 
 
 class NetworkInterface(Struct):
@@ -80,10 +138,12 @@ class NetworkInterface(Struct):
 
 class Stats(Struct):
     cpu: Cpu
+    cpuset: CPUSet
     memory: Memory
     pids: Pids
     blkio: Blkio
     hugetlb: dict[str, Hugetlb]
+    intel_rdt: IntelRdt
     network_interfaces: list[NetworkInterface]
 
 
