@@ -1,8 +1,9 @@
+from datetime import timedelta
 from functools import cached_property
 from io import BytesIO
 from os import environ
 from subprocess import PIPE, Popen
-from typing import IO, Literal
+from typing import IO, Literal, cast
 from warnings import warn
 
 from msgspec import json
@@ -11,7 +12,7 @@ from pyoci.runtime.client import errors
 from pyoci.runtime.client.spec.features import Features
 from pyoci.runtime.client.specific.runc import State
 from pyoci.runtime.client.specific.runc.constraints import Constraints
-from pyoci.runtime.client.specific.runc.events import Stats
+from pyoci.runtime.client.specific.runc.events import Event, Stats
 from pyoci.runtime.client.utils import OpenIO, default
 from pyoci.runtime.config.process import Process
 
@@ -174,7 +175,7 @@ class Runc:
     def kill(
         self,
         id: str,
-        signal: str | None = default("SIGTERM"),
+        signal: str | None = "SIGTERM",
         all: bool = False,
     ) -> None:
         args = ["--all"] if all else []
@@ -199,15 +200,15 @@ class Runc:
     def stats(self, id: str):
         p = self._run("events", "--stats", id)
         errors.handle(p)
-        return json.decode(p.stdout.read(), type=Stats)  # type: ignore # TODO: IO
+        return cast(Stats, json.decode(p.stdout.read(), type=Event).data)  # type: ignore # TODO: IO
+
+    # def events(self, id: str, update_interval: timedelta | None): ... # TODO
 
     @cached_property
     def features(self):
         p = self._run("features")
         errors.handle(p)
-        d = p.stdout.read()
-        print(d)
-        return json.decode(d, type=Features)  # type: ignore # TODO: IO
+        return json.decode(p.stdout.read(), type=Features)  # type: ignore # TODO: IO
 
     def update(self, id: str, new_constraints: Constraints):
         # TODO: use encode_into instead of BytesIO to save memory

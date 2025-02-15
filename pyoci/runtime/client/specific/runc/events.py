@@ -144,7 +144,7 @@ class Stats(Struct):
     blkio: Blkio
     hugetlb: dict[str, Hugetlb]
     intel_rdt: IntelRdt
-    network_interfaces: list[NetworkInterface]
+    network_interfaces: list[NetworkInterface] | None = None
 
 
 class Event(Struct):
