@@ -3,7 +3,7 @@ from typing import Literal
 
 from msgspec import ValidationError, json
 
-from pyoci.common import UNSET, Struct
+from pyoci.common import Struct, Unset
 from pyoci.image.digest import DEFAULT_ALGORITHM, Digest
 from pyoci.image.manifest import Index, Manifest, ManifestDescriptor
 from pyoci.image.well_known import ImageAnnotation
@@ -95,11 +95,10 @@ class OCILayout:
         manifests_by_tag = {}
 
         for manifest_descriptor in self.index.manifests:
-            # TODO: typing
-            if manifest_descriptor.annotations is UNSET:
+            if isinstance(manifest_descriptor.annotations, Unset):
                 continue
 
-            tag: str | None = manifest_descriptor.annotations.get(  # type: ignore
+            tag: str | None = manifest_descriptor.annotations.get(
                 ImageAnnotation.ref_name
             )
 
