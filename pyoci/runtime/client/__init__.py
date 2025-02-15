@@ -11,6 +11,7 @@ from pyoci.runtime.client import errors
 from pyoci.runtime.client.spec.features import Features
 from pyoci.runtime.client.specific.runc import State
 from pyoci.runtime.client.specific.runc.constraints import Constraints
+from pyoci.runtime.client.specific.runc.events import Stats
 from pyoci.runtime.client.utils import OpenIO, default
 from pyoci.runtime.config.process import Process
 
@@ -136,6 +137,7 @@ class Runc:
         ignore_paused: bool = False,
         pass_fds: int | None = None,  # NOTE: renaming intentinally
     ):
+        # TODO: annotate detach with a proper type override
         args = []
         if console_socket:
             args.append(f"--console-socket={console_socket}")
@@ -157,6 +159,9 @@ class Runc:
             pass_fds=tuple(range(3, 3 + pass_fds)) if pass_fds is not None else (),
         )
         errors.handle(p)
+
+        if not detach:
+            return OpenIO(p.stdin, p.stdout, p.stderr)  # type: ignore # TODO: IO
 
     def pause(self, id: str) -> None:
         p = self._run("pause", id)
@@ -180,6 +185,11 @@ class Runc:
         p = self._run("state", id)
         errors.handle(p)
         return json.decode(p.stdout.read(), type=State)  # type: ignore # TODO: IO
+
+    def stats(self, id: str):
+        p = self._run("events", "--stats", id)
+        errors.handle(p)
+        return json.decode(p.stdout.read(), type=Stats)  # type: ignore # TODO: IO
 
     @cached_property
     def features(self):
