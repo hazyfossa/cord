@@ -18,14 +18,8 @@ class Feature(Struct):
     enabled: bool | Unset = UNSET
 
 
-Apparmor = Feature
-Selinux = Feature
-IntelRdt = Feature
-Idmap = Feature
-
-
 class MountExtensions(Struct):
-    idmap: Idmap | Unset = UNSET
+    idmap: Feature | Unset = UNSET
 
 
 class LinuxFeatures(Struct):
@@ -37,7 +31,7 @@ class LinuxFeatures(Struct):
     capabilities: Sequence[Capability] | Unset = UNSET
     cgroup: Cgroup | Unset = UNSET
     seccomp: SeccompFeature | Unset = UNSET
-    apparmor: Apparmor | Unset = UNSET
-    selinux: Selinux | Unset = UNSET
-    intelRdt: IntelRdt | Unset = UNSET
+    apparmor: Feature | Unset = UNSET
+    selinux: Feature | Unset = UNSET
+    intelRdt: Feature | Unset = UNSET
     mountExtensions: MountExtensions | Unset = UNSET
