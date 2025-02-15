@@ -1,5 +1,9 @@
 from pyoci.common import Struct, Unset, UNSET
 
+# NOTE: This is a (reduced) copy of pyoci.runtime.config.platform.linux
+# This needs to be done this way because the alternative (relocating these structs to platform.linux)
+# ultimately requires pyoci schema to depend on internal choices of runc.
+
 
 class Memory(Struct):
     limit: int
