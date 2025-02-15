@@ -176,6 +176,5 @@ class Linux(BaseLinux, Struct):
 class ContainerConfig(BaseContainerConfig, Struct):
     root: Root | Unset = field(default_factory=lambda: Root(path=rootfs))
     mounts: Sequence[Mount] | Unset = field(default_factory=lambda: mounts)
-    user: User | Unset = field(default_factory=lambda: root_user)
     process: BaseProcess | Unset = field(default_factory=lambda: Process())
     linux: BaseLinux | Unset = field(default_factory=lambda: Linux())
