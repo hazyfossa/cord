@@ -36,7 +36,7 @@ class Image(Struct):
 
 class ImageConfig(
     Struct
-):  # TODO: conside renaming the python reflection's fields for consistency
+):  # TODO: consider renaming the python reflection's fields for consistency
     """
     https://github.com/opencontainers/image-spec/blob/v1.1.0/config.md
     """

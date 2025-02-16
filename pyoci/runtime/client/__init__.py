@@ -2,13 +2,13 @@ from datetime import timedelta
 from functools import cached_property
 from io import BytesIO
 from os import environ
-from subprocess import PIPE, Popen
-from typing import IO, Literal, cast
+from pathlib import Path
+from typing import Literal, cast
 from warnings import warn
 
 from msgspec import json
 
-from pyoci.runtime.client import errors
+from pyoci.runtime.client.utils import CLIWrapperBase
 from pyoci.runtime.client.spec.features import Features
 from pyoci.runtime.client.specific.runc import State
 from pyoci.runtime.client.specific.runc.constraints import Constraints
@@ -26,10 +26,10 @@ if "NOTIFY_SOCKET" in environ:
 
 # TODO: Implement a pure-oci runtime interface, just in case
 # TODO: cleanly support differences between runc and crun
-class Runc:
+class Runc(CLIWrapperBase):
     def __init__(
         self,
-        path: str = "runc",
+        path: str | Path = "runc",
         handle_errors: bool = True,
         debug: bool | None = default(False),
         # TODO: errors without stderr
@@ -40,8 +40,6 @@ class Runc:
         rootless: bool | Literal["auto"] | None = default("auto"),
         setpgid: bool = False,
     ):
-        path = str(path)
-
         if handle_errors:
             if log or log_format:
                 raise ValueError(
@@ -64,30 +62,7 @@ class Runc:
         if rootless:
             args.append(f"--rootless={str(rootless).lower()}")
 
-        self.__global_args__ = args
-
-        def _run(
-            *args,
-            stdin: int | IO | None = None,
-            stdout: int | IO | None = PIPE,
-            wait: bool = True,
-            **kwargs,
-        ):
-            process = Popen(
-                [path, *self.__global_args__, *args],
-                stdin=stdin,
-                stdout=stdout,
-                stderr=PIPE,  # TODO: errors without stderr
-                process_group=0 if setpgid else None,
-                **kwargs,
-            )
-
-            if wait:
-                process.wait()
-
-            return process
-
-        self._run = _run
+        super().__init__(str(path), args, setpgid)
 
     # TODO: separate the IO setup somehow
     def create(
@@ -114,19 +89,18 @@ class Runc:
         if pass_fds:
             args.append(f"--preserve-fds={pass_fds}")
 
-        p = self._run(
+        p = self._run_raw(
             "create",
             *args,
             id,
             pass_fds=tuple(range(3, 3 + pass_fds)) if pass_fds is not None else (),
-            stdin=PIPE,
+            stdin=True,
         )
-        errors.handle(p)
+
         return OpenIO(p.stdin, p.stdout, p.stderr)  # type: ignore # TODO: IO
 
     def start(self, id: str) -> None:
-        p = self._run("start", id)
-        errors.handle(p)
+        self._run("start", id)
 
     def exec(
         self,
@@ -151,7 +125,7 @@ class Runc:
         if pass_fds:
             args.append(f"--preserve-fds={pass_fds}")
 
-        p = self._run(
+        p = self._run_raw(
             "exec",
             *args,
             "-p -",
@@ -159,18 +133,15 @@ class Runc:
             stdin=BytesIO(json.encode(process)),
             pass_fds=tuple(range(3, 3 + pass_fds)) if pass_fds is not None else (),
         )
-        errors.handle(p)
 
         if not detach:
             return OpenIO(p.stdin, p.stdout, p.stderr)  # type: ignore # TODO: IO
 
     def pause(self, id: str) -> None:
-        p = self._run("pause", id)
-        errors.handle(p)
+        self._run("pause", id)
 
     def resume(self, id: str) -> None:
-        p = self._run("resume", id)
-        errors.handle(p)
+        self._run("resume", id)
 
     def kill(
         self,
@@ -179,43 +150,37 @@ class Runc:
         all: bool = False,
     ) -> None:
         args = ["--all"] if all else []
-        p = self._run("kill", *args, id, signal)
-        errors.handle(p)
+        self._run("kill", *args, id, signal)
 
     def delete(self, id: str, force: bool = False) -> None:
         args = ["--force"] if force else []
-        p = self._run("delete", *args, id)
-        errors.handle(p)
+        self._run("delete", *args, id)
 
     def list(self) -> list[State]:
-        p = self._run("list", "--format=json")
-        errors.handle(p)
-        return json.decode(p.stdout.read(), type=list[State])  # type: ignore # TODO: IO
+        stdout = self._run("list", "--format=json")
+        return json.decode(stdout.read(), type=list[State])
 
     def state(self, id: str):
-        p = self._run("state", id)
-        errors.handle(p)
-        return json.decode(p.stdout.read(), type=State)  # type: ignore # TODO: IO
+        stdout = self._run("state", id)
+        return json.decode(stdout.read(), type=State)
 
     def stats(self, id: str):
-        p = self._run("events", "--stats", id)
-        errors.handle(p)
-        return cast(Stats, json.decode(p.stdout.read(), type=Event).data)  # type: ignore # TODO: IO
+        stdout = self._run("events", "--stats", id)
+        return cast(Stats, json.decode(stdout.read(), type=Event).data)
 
     # def events(self, id: str, update_interval: timedelta | None): ... # TODO
 
     @cached_property
     def features(self):
-        p = self._run("features")
-        errors.handle(p)
-        return json.decode(p.stdout.read(), type=Features)  # type: ignore # TODO: IO
+        stdout = self._run("features")
+
+        return json.decode(stdout.read(), type=Features)
 
     def update(self, id: str, new_constraints: Constraints):
         # TODO: use encode_into instead of BytesIO to save memory
-        p = self._run(
+        self._run(
             "update",
             "-r -",
             id,
             stdin=BytesIO(json.encode(new_constraints)),
         )
-        errors.handle(p)

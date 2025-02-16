@@ -29,7 +29,7 @@ def handle(process: Popen, **context) -> None:
     stderr = process.stderr  # TODO: errors without stderr
 
     if stderr is None:
-        raise RuntimeError("Cannot handle errors, as stderr isn't captured.")
+        raise RuntimeError("Cannot handle errors as stderr isn't captured.")
 
     log = decoder.decode_lines(stderr.read())
 
@@ -39,5 +39,7 @@ def handle(process: Popen, **context) -> None:
     for entry in log:
         if entry.level == "error":
             raise ContainerRuntimeError(entry.message)
-        
-    raise ContainerRuntimeError(f"Exited with code {ret}. Couldn't find an error in the log.")
+
+    raise ContainerRuntimeError(
+        f"Exited with code {ret}. Couldn't find an error in the log."
+    )
