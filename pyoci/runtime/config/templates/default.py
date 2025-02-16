@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import Any
+from copy import deepcopy
 
 from msgspec import field
 
@@ -149,10 +149,19 @@ root_user = User(uid=0, gid=0)
 env_path = "/usr/local/bin:/usr/bin:/bin"  # TODO
 
 
+def default[T](obj: T) -> T:
+    return field(default_factory=lambda: deepcopy(obj))
+
+
+def default_struct[T: Struct](obj: type[T]) -> T:
+    return field(default_factory=lambda: obj())
+
+
 class Process(BaseProcess, Struct):
     cwd: str = "/"
-    user: User | Unset = field(default_factory=lambda: root_user)
+    user: User | Unset = default(root_user)
     noNewPrivileges: bool | Unset = True
+    capabilities: Capabilities | Unset = default(capabilities)
 
     def __post_init__(self):
         self.env = (self.env or []) + [f"PATH={env_path}"]
@@ -162,19 +171,19 @@ class Process(BaseProcess, Struct):
 
 
 class Resources(BaseResources, Struct):
-    devices: Sequence[DeviceCgroup] | Unset = field(default_factory=lambda: devices)
+    devices: Sequence[DeviceCgroup] | Unset = default(devices)
 
 
 class Linux(BaseLinux, Struct):
-    namespaces: Sequence[Namespace] | Unset = field(default_factory=lambda: namespaces)
+    namespaces: Sequence[Namespace] | Unset = default(namespaces)
     rootfsPropagation: RootfsPropagation | Unset = "private"
-    maskedPaths: Sequence[str] | Unset = field(default_factory=lambda: masked_paths)
-    readonlyPaths: Sequence[str] | Unset = field(default_factory=lambda: readonly_paths)
-    resources: BaseResources | Unset = field(default_factory=lambda: Resources())
+    maskedPaths: Sequence[str] | Unset = default(masked_paths)
+    readonlyPaths: Sequence[str] | Unset = default(readonly_paths)
+    resources: BaseResources | Unset = default_struct(Resources)
 
 
 class ContainerConfig(BaseContainerConfig, Struct):
-    root: Root | Unset = field(default_factory=lambda: Root(path=rootfs))
-    mounts: Sequence[Mount] | Unset = field(default_factory=lambda: mounts)
-    process: BaseProcess | Unset = field(default_factory=lambda: Process())
-    linux: BaseLinux | Unset = field(default_factory=lambda: Linux())
+    root: Root | Unset = default(Root(path=rootfs))
+    mounts: Sequence[Mount] | Unset = default(mounts)
+    process: BaseProcess | Unset = default_struct(Process)
+    linux: BaseLinux | Unset = default_struct(Linux)
