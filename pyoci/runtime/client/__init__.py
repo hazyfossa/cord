@@ -3,17 +3,17 @@ from functools import cached_property
 from io import BytesIO
 from os import environ
 from pathlib import Path
+from subprocess import PIPE
 from typing import Literal, cast
 from warnings import warn
 
 from msgspec import json
 
-from pyoci.runtime.client.utils import CLIWrapperBase
 from pyoci.runtime.client.spec.features import Features
 from pyoci.runtime.client.specific.runc import State
 from pyoci.runtime.client.specific.runc.constraints import Constraints
 from pyoci.runtime.client.specific.runc.events import Event, Stats
-from pyoci.runtime.client.utils import OpenIO, default
+from pyoci.runtime.client.utils import CLIWrapperBase, OpenIO, default
 from pyoci.runtime.config.process import Process
 
 # TODO: filter out automatically
@@ -30,31 +30,18 @@ class Runc(CLIWrapperBase):
     def __init__(
         self,
         path: str | Path = "runc",
-        handle_errors: bool = True,
         debug: bool | None = default(False),
-        # TODO: errors without stderr
-        log: str | None = default("/dev/stderr"),
-        log_format: Literal["text", "json"] | None = default("text"),
         root: str | None = default("/run/user/1000//runc"),
         systemd_cgroup: bool | None = default(False),
         rootless: bool | Literal["auto"] | None = default("auto"),
         setpgid: bool = False,
     ):
-        if handle_errors:
-            if log or log_format:
-                raise ValueError(
-                    "Setting log or log_format is not supported when using handle_errors"
-                )
+        # TODO: errors without stderr
 
-            log_format = "json"
+        args = ["--log-format=json"]
 
-        args = []
         if debug:
             args.append("--debug")
-        if log:
-            args.append(f"--log={log}")
-        if log_format:
-            args.append(f"--log-format={log_format}")
         if root:
             args.append(f"--root={root}")
         if systemd_cgroup:
@@ -94,7 +81,7 @@ class Runc(CLIWrapperBase):
             *args,
             id,
             pass_fds=tuple(range(3, 3 + pass_fds)) if pass_fds is not None else (),
-            stdin=True,
+            stdin=PIPE,
         )
 
         return OpenIO(p.stdin, p.stdout, p.stderr)  # type: ignore # TODO: IO
@@ -130,7 +117,9 @@ class Runc(CLIWrapperBase):
             *args,
             "-p -",
             id,
-            stdin=BytesIO(json.encode(process)),
+            stdin=BytesIO(
+                json.encode(process)
+            ),  # TODO: we cannot take stdin here, as it'll be passed to the executed process
             pass_fds=tuple(range(3, 3 + pass_fds)) if pass_fds is not None else (),
         )
 

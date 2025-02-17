@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from subprocess import PIPE, Popen
 from typing import IO, BinaryIO, cast
 
+from pyoci.common import Struct
 from pyoci.runtime.client import errors
 
 
@@ -40,7 +41,6 @@ class CLIWrapperBase:
         *args,
         stdin: int | IO | None = None,
         stdout: int | IO | None = PIPE,
-        wait: bool = True,
         **kwargs,
     ):
         process = Popen(
@@ -52,8 +52,8 @@ class CLIWrapperBase:
             **kwargs,
         )
 
-        if wait:
-            process.wait()
+        process.wait()
+        errors.handle(process)
 
         return process
 
@@ -64,5 +64,4 @@ class CLIWrapperBase:
         **kwargs,
     ) -> BinaryIO:
         process = self._run_raw(*args, stdin=stdin, **kwargs)
-        errors.handle(process)
         return cast(BinaryIO, process.stdout)
