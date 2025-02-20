@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from pyoci.base_types import Annotations
@@ -32,3 +33,9 @@ class ContainerConfig(Struct, SimpleJsonMixin):
 
     if not TYPE_CHECKING:
         ociVersion: str = __oci_version__
+
+    def read_bundle(self, bundle: Path) -> None:
+        self.loads((bundle / "config.json").read_bytes())
+
+    def write_bundle(self, bundle: Path) -> None:
+        (bundle / "config.json").write_bytes(self.dumps())

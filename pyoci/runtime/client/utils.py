@@ -1,8 +1,8 @@
 from dataclasses import dataclass
+from pathlib import Path
 from subprocess import PIPE, Popen
 from typing import IO, BinaryIO, cast
 
-from pyoci.common import Struct
 from pyoci.runtime.client import errors
 
 
@@ -31,8 +31,8 @@ class OpenIO:
 
 
 class CLIWrapperBase:
-    def __init__(self, path: str, global_args: list[str], setpgid: bool = False):
-        self.executable_path = path
+    def __init__(self, path: str | Path, global_args: list[str], setpgid: bool = False):
+        self.executable_path = str(path)
         self.__global_args__ = global_args
         self.__setpgid = setpgid
 

@@ -49,13 +49,13 @@ class Runc(CLIWrapperBase):
         if rootless:
             args.append(f"--rootless={str(rootless).lower()}")
 
-        super().__init__(str(path), args, setpgid)
+        super().__init__(path, args, setpgid)
 
     # TODO: separate the IO setup somehow
     def create(
         self,
         id: str,
-        bundle: str,
+        bundle: str | Path,
         console_socket: str | None = None,
         pid_file: str | None = None,
         no_pivot: bool | None = False,
