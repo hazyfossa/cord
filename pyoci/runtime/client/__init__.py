@@ -30,10 +30,10 @@ class Runc(CLIWrapperBase):
     def __init__(
         self,
         path: str | Path = "runc",
-        debug: bool | None = default(False),
-        root: str | None = default("/run/user/1000//runc"),
-        systemd_cgroup: bool | None = default(False),
-        rootless: bool | Literal["auto"] | None = default("auto"),
+        debug: bool = False,
+        root: str | None = None,
+        systemd_cgroup: bool = False,
+        rootless: bool | Literal["auto"] | None = None,
         setpgid: bool = False,
     ):
         # TODO: errors without stderr

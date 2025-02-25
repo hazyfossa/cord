@@ -9,6 +9,7 @@ from pyoci.runtime.client import errors
 # - default with encode=False is only for documentation
 # (i.e. showing default values within a container runtime)
 # - default with encode=True is a regular python default
+#! Deprecated
 def default(value, encode=False):
     if encode:
         return value
