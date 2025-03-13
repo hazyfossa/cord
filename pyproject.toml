@@ -1,6 +1,6 @@
 [project]
 name = "pyoci"
-version = "0.3.3"
+version = "0.3.4"
 authors = [{ name = "hazyfossa", email = "hazyfossa@gmail.com" }]
 description = "OCI-runtime spec represented as python objects."
 readme = "README.md"
