@@ -7,28 +7,12 @@
 
 **What**: A library to define OCI [Runtime](https://github.com/opencontainers/runtime-spec) and [Image](https://github.com/opencontainers/image-spec) specification compliant container instances.
 
-**When**: When you need to run or modify a container at the lowest level, without containerd or docker/podman.
+**When**: When you need to run or modify a container at the lowest level, without docker, containerd or podman.
 
 **Why**: The full OCI specifications can be quite large to read, and even trickier to implement. This library saves you all the json-wrangling and validation, without abstracting any features away.
 
-**How**: Under the hood, everything here is a msgpack Struct. These structs were generated from the original json-schema with help of [datamodel-code-generator](https://github.com/koxudaxi/datamodel-code-generator) and then manually refactored by me.
+# notes
 
-#
-**Pros**:
-- Full control over the container.
-- Compatible with many runtimes.
-- Very lightweight[^1].
-
-**Cons**:
-- Requires low-level knowledge of how a container is constructed.
-- Isn't well tested (for now).
-
-#
-
-This is a low-level library. If you want to simply run a container, without configuring all the inner workings, i'd suggest [docker-py](https://github.com/docker/docker-py).
-
-This library is runtime-agnostic, so it doesn't provide a way to actually run the container. You'll need to pass the definition to an appropriate runtime yourself.
-
-Also, I want to say a huge thanks to koxudaxi and other contributors for the awesome code generator!
-
-[^1]: Pyoci should be very fast and memory/resource efficent thanks to use of msgspec. The performance of actually running the container will depend on your provided runtime.
+* This project has nothing to do with [PyOCI](https://github.com/AllexVeldman/pyoci) - the oci registry proxy for python packages. The current name of this library will most likely be changed in the future.
+* This library is heavily WIP, so there are no guarantees about API stability until a 1.x release.
+* This is a low-level library. If you want to simply run a container, without configuring all the inner workings, i'd suggest [docker-py](https://github.com/docker/docker-py).
