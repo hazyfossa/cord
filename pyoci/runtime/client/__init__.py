@@ -13,7 +13,7 @@ from pyoci.runtime.client.spec.features import Features
 from pyoci.runtime.client.specific.runc import State
 from pyoci.runtime.client.specific.runc.constraints import Constraints
 from pyoci.runtime.client.specific.runc.events import Event, Stats
-from pyoci.runtime.client.utils import CLIWrapperBase, OpenIO, default
+from pyoci.runtime.client.utils import CLIWrapperBase, OpenIO
 from pyoci.runtime.config.process import Process
 
 # TODO: filter out automatically
