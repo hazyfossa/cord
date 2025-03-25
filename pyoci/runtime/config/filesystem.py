@@ -1,9 +1,7 @@
 from collections.abc import Sequence
 
-from msgspec import UNSET, Struct
-from msgspec import UnsetType as Unset
-
 from pyoci.base_types import Uint32
+from pyoci.common import UNSET, Struct, Unset
 
 FilePath = str
 
