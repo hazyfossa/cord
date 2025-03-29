@@ -19,7 +19,7 @@ class Manifest(Struct, SimpleJsonMixin):
 
     if not TYPE_CHECKING:
         schemaVersion: Literal[2] = 2
-        mediaType: Literal[OciMediaType.image_manifest] = OciMediaType.image_manifest
+        mediaType: OciMediaType.image_manifest = OciMediaType.image_manifest
 
 
 class Index(Struct, SimpleJsonMixin):
@@ -33,4 +33,4 @@ class Index(Struct, SimpleJsonMixin):
 
     if not TYPE_CHECKING:
         schemaVersion: Literal[2] = 2
-        mediaType: Literal[OciMediaType.image_index] = OciMediaType.image_index
+        mediaType: OciMediaType.image_index = OciMediaType.image_index
