@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Literal
 
@@ -19,7 +17,9 @@ class Manifest(Struct, SimpleJsonMixin):
 
     if not TYPE_CHECKING:
         schemaVersion: Literal[2] = 2
-        mediaType: OciMediaType.image_manifest = OciMediaType.image_manifest
+        mediaType: Literal[OciMediaType.image_manifest.value] = (
+            OciMediaType.image_manifest
+        )
 
 
 class Index(Struct, SimpleJsonMixin):
@@ -33,4 +33,4 @@ class Index(Struct, SimpleJsonMixin):
 
     if not TYPE_CHECKING:
         schemaVersion: Literal[2] = 2
-        mediaType: OciMediaType.image_index = OciMediaType.image_index
+        mediaType: Literal[OciMediaType.image_index.value] = OciMediaType.image_index
