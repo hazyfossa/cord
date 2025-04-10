@@ -1,8 +1,8 @@
 from io import TextIOWrapper
 from pathlib import Path
 
-from pyoci.runtime.client import Runc
-from pyoci.runtime.config.templates.default import ContainerConfig, Process
+from cord.run import Runc
+from cord.oci.runtime.templates.default import ContainerConfig, Process
 
 # The id for your new container, must be unique across the system
 ID = "test"
@@ -13,7 +13,7 @@ BUNDLE = Path("./test/container/")
 
 # Define all required parameters for the container
 process = Process(args=["/bin/hostname"], terminal=False)
-c = ContainerConfig(process, hostname="pyoci-test-container")
+c = ContainerConfig(process, hostname="cord-test-container")
 
 c.write_bundle(BUNDLE)
 

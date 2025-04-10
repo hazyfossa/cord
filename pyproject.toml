@@ -1,20 +1,21 @@
 [project]
-name = "pyoci"
-version = "0.3.4"
+name = "cord"
+version = "0.0.1"
 authors = [{ name = "hazyfossa", email = "hazyfossa@gmail.com" }]
-description = "OCI-runtime spec represented as python objects."
+description = "Containers for snakes!"
 readme = "README.md"
 requires-python = ">=3.13"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Intended Audience :: Developers",
+    "Development Status :: 2 - Pre-Alpha",
 ]
 dependencies = ["msgspec >=0.19.0,<1"]
 
 [project.urls]
-Homepage = "https://github.com/hazyfossa/pyoci"
-Issues = "https://github.com/hazyfossa/pyoci/issues"
+Homepage = "https://github.com/hazyfossa/cord"
+Issues = "https://github.com/hazyfossa/cord/issues"
 
 [build-system]
 requires = ["hatchling"]
