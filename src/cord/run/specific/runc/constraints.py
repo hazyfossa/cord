@@ -1,9 +1,9 @@
 from cord.base_types import UNSET, Unset
 from cord.base_types import Struct
 
-# NOTE: This is a (reduced) copy of pyoci.runtime.config.platform.linux
+# NOTE: This is a (reduced) copy of cord.oci.runtime.platform.linux
 # This needs to be done this way because the alternative (relocating these structs to platform.linux)
-# ultimately requires pyoci schema to depend on internal choices of runc.
+# ultimately requires oci schema definitions to depend on internal choices of runc.
 
 
 class Memory(Struct):

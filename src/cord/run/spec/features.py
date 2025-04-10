@@ -9,7 +9,7 @@ class Features(Struct):
     """
     https://github.com/opencontainers/runtime-spec/blob/main/features.md
 
-    Features of the pyoci.runtime. Unrelated to features of the host.
+    Features of the runtime. Unrelated to features of the host.
     None means "unknown", not "unsupported".
     """
 

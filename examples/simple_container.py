@@ -13,7 +13,7 @@ BUNDLE = Path("./test/container/")
 
 # Define all required parameters for the container
 process = Process(args=["/bin/hostname"], terminal=False)
-c = ContainerConfig(process, hostname="pyoci-test-container")
+c = ContainerConfig(process, hostname="cord-test-container")
 
 c.write_bundle(BUNDLE)
 
