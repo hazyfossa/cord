@@ -1,8 +1,8 @@
 [project]
-name = "pyoci"
-version = "0.3.4"
+name = "cord"
+version = "0.1.0"
 authors = [{ name = "hazyfossa", email = "hazyfossa@gmail.com" }]
-description = "OCI-runtime spec represented as python objects."
+description = "Containers for snakes!"
 readme = "README.md"
 requires-python = ">=3.13"
 classifiers = [

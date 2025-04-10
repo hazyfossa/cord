@@ -3,6 +3,17 @@ revision = 1
 requires-python = ">=3.13"
 
 [[package]]
+name = "cord"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "msgspec" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "msgspec", specifier = ">=0.19.0,<1" }]
+
+[[package]]
 name = "msgspec"
 version = "0.19.0"
 source = { registry = "https://pypi.org/simple" }
@@ -16,14 +27,3 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/aa/5a/4cd408d90d1417e8d2ce6a22b98a6853c1b4d7cb7669153e4424d60087f6/msgspec-0.19.0-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:a5bc1472223a643f5ffb5bf46ccdede7f9795078194f14edd69e3aab7020d327", size = 219087 },
     { url = "https://files.pythonhosted.org/packages/23/d8/f15b40611c2d5753d1abb0ca0da0c75348daf1252220e5dda2867bd81062/msgspec-0.19.0-cp313-cp313-win_amd64.whl", hash = "sha256:317050bc0f7739cb30d257ff09152ca309bf5a369854bbf1e57dffc310c1f20f", size = 187432 },
 ]
-
-[[package]]
-name = "pyoci"
-version = "0.3.4"
-source = { editable = "." }
-dependencies = [
-    { name = "msgspec" },
-]
-
-[package.metadata]
-requires-dist = [{ name = "msgspec", specifier = ">=0.19.0,<1" }]
