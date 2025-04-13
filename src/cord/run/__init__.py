@@ -1,21 +1,22 @@
+from dataclasses import dataclass
 from datetime import timedelta
 from functools import cached_property
 from io import BytesIO
 from os import environ
 from pathlib import Path
 from subprocess import PIPE
-from typing import Literal, cast
+from typing import BinaryIO, Literal, cast
 from warnings import warn
 
 from msgspec import json
 
+from cord.oci.runtime.process import Process
+from cord.run import errors
 from cord.run.spec.features import Features
 from cord.run.specific.runc import State
 from cord.run.specific.runc.constraints import Constraints
 from cord.run.specific.runc.events import Event, Stats
-from cord.run.utils import CLIWrapperBase, OpenIO
-from cord.oci.runtime.process import Process
-
+from cord.utils.clwrap import CLIWrapperBase
 
 # TODO: filter out automatically
 # Is this runc-specific?
@@ -23,6 +24,20 @@ if "NOTIFY_SOCKET" in environ:
     warn(
         "NOTIFY_SOCKET environment variable is set, and will be passed to the runtime, which may cause issues."
     )
+
+
+@dataclass
+class OpenIO:
+    stdin: BinaryIO
+    stdout: BinaryIO
+    stderr: BinaryIO
+
+    @property
+    def as_tuple(self):
+        return (self.stdin, self.stdout, self.stderr)
+
+    def close(self) -> None:
+        map(lambda x: x.close(), self.as_tuple)
 
 
 # TODO: Implement a pure-oci runtime interface, just in case
@@ -50,7 +65,7 @@ class Runc(CLIWrapperBase):
         if rootless:
             args.append(f"--rootless={str(rootless).lower()}")
 
-        super().__init__(path, args, setpgid)
+        super().__init__(path, args, errors.handle, setpgid)
 
     # TODO: separate the IO setup somehow
     def create(
