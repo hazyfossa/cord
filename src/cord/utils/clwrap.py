@@ -1,30 +1,21 @@
-from dataclasses import dataclass
 from pathlib import Path
 from subprocess import PIPE, Popen
-from typing import IO, BinaryIO, cast
-
-from cord.run import errors
-
-
-@dataclass
-class OpenIO:
-    stdin: BinaryIO
-    stdout: BinaryIO
-    stderr: BinaryIO
-
-    @property
-    def as_tuple(self):
-        return (self.stdin, self.stdout, self.stderr)
-
-    def close(self) -> None:
-        map(lambda x: x.close(), self.as_tuple)
+from typing import IO, BinaryIO, Callable, cast
 
 
 class CLIWrapperBase:
-    def __init__(self, path: str | Path, global_args: list[str], setpgid: bool = False):
+    def __init__(
+        self,
+        path: str | Path,
+        global_args: list[str],
+        error_handler: Callable[[Popen], None] | None = None,
+        setpgid: bool = False,
+    ):
         self.executable_path = str(path)
-        self.__global_args__ = global_args
-        self.__setpgid = setpgid
+
+        self._error_handler = error_handler
+        self._global_args = global_args
+        self._setpgid = setpgid
 
     def _run_raw(
         self,
@@ -34,16 +25,18 @@ class CLIWrapperBase:
         **kwargs,
     ):
         process = Popen(
-            [self.executable_path, *self.__global_args__, *args],
+            [self.executable_path, *self._global_args, *args],
             stdin=stdin,
             stdout=stdout,
             stderr=PIPE,  # TODO: errors without stderr
-            process_group=0 if self.__setpgid else None,
+            process_group=0 if self._setpgid else None,
             **kwargs,
         )
 
         process.wait()
-        errors.handle(process)
+
+        if self._error_handler:
+            self._error_handler(process)
 
         return process
 
