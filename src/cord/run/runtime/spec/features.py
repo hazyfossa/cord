@@ -10,7 +10,7 @@ class Features(Struct):
     https://github.com/opencontainers/runtime-spec/blob/main/features.md
 
     Features of the runtime. Unrelated to features of the host.
-    None means "unknown", not "unsupported".
+    Unset means "unknown", not "unsupported".
     """
 
     ociVersionMin: str
