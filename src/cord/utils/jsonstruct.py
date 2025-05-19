@@ -1,10 +1,9 @@
+from collections.abc import Buffer
+
 from msgspec import json
 
 
-from collections.abc import Buffer
-
-
-class SimpleJsonMixin:
+class JsonStruct:
     @classmethod
     def loads(cls, data: Buffer | str):
         return json.decode(data, type=cls)

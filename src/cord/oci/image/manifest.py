@@ -4,10 +4,10 @@ from typing import TYPE_CHECKING, Literal
 from cord.base_types import UNSET, Annotations, Struct, Unset
 from cord.oci.image.descriptor import Descriptor, ManifestDescriptor
 from cord.oci.image.well_known import MediaType, OciMediaType
-from cord.utils.jsonstruct import SimpleJsonMixin
+from cord.utils.jsonstruct import JsonStruct
 
 
-class Manifest(Struct, SimpleJsonMixin):
+class Manifest(Struct, JsonStruct):
     config: Descriptor
     layers: Sequence[Descriptor]
 
@@ -22,7 +22,7 @@ class Manifest(Struct, SimpleJsonMixin):
         )
 
 
-class Index(Struct, SimpleJsonMixin):
+class Index(Struct, JsonStruct):
     # TODO: manifests can contain index descriptors. Do we consider index descriptors instances of ManifestDescriptor?
     # I.e. is "platform" valid on an index descriptor?
     manifests: list[ManifestDescriptor]
