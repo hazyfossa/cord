@@ -12,6 +12,9 @@ DigestStr = Annotated[
     ),
 ]
 
+# TODO: when we have a rust pipeline impl in ponder, digest creating should be implemented there
+# instead of reading the content twice
+
 
 # NOTE: This is mostly a wrapper around standart library hashlib
 class Digest:
@@ -29,6 +32,12 @@ class Digest:
     def __eq__(self, digest) -> bool:
         assert isinstance(digest, Digest)
         return self.algorithm == digest.algorithm and self.value == digest.value
+
+    def __hash__(self) -> int:
+        # TODO: what is more common, this or exporting as string?
+        # depending on that, store the value in int and hexpring on __str__
+        # else do as we do right now here
+        return int(self.value, 16)
 
     @classmethod
     def from_bytes(cls, data: bytes, algorithm: str = DEFAULT_ALGORITHM) -> Self:

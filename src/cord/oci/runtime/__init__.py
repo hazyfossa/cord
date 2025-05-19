@@ -2,23 +2,22 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from cord.base_types import UNSET, Annotations, Unset
-from cord.base_types import Struct
-from cord.oci.runtime.filesystem import Mount, Root
-from cord.oci.runtime.hooks import Hooks
-from cord.oci.runtime.platform.linux import Linux
-from cord.oci.runtime.platform.solaris import Solaris
-from cord.oci.runtime.platform.vm import Vm
-from cord.oci.runtime.platform.windows import Windows
-from cord.oci.runtime.platform.zos import Zos
-from cord.oci.runtime.process import Process
-from cord.utils.jsonstruct import SimpleJsonMixin
+from cord.base_types import UNSET, Annotations, Struct, Unset
+from cord.utils.jsonstruct import JsonStruct
 
+from .filesystem import Mount, Root
+from .hooks import Hooks
+from .platform.linux import Linux
+from .platform.solaris import Solaris
+from .platform.vm import Vm
+from .platform.windows import Windows
+from .platform.zos import Zos
+from .process import Process
 
 __oci_version__ = "1.2.0"
 
 
-class ContainerConfig(Struct, SimpleJsonMixin):
+class ContainerConfig(Struct, JsonStruct):
     process: Process | Unset = UNSET
     mounts: Sequence[Mount] | Unset = UNSET
     hostname: str | Unset = UNSET

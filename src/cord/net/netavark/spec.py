@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import ipaddress as ip
 from datetime import datetime
 
@@ -13,7 +11,7 @@ class IPNet(Struct):
     network: IPNetwork
 
     @classmethod
-    def parse_cidr(cls, cidr: str) -> IPNet:
+    def parse_cidr(cls, cidr: str) -> "IPNet":
         network = ip.ip_network(cidr, strict=False)
         return cls(network=network)
 
@@ -21,16 +19,16 @@ class IPNet(Struct):
         return str(self.network)
 
 
+class LeaseRange(Struct):
+    start_ip: IPAdress | Unset = UNSET
+    end_ip: IPAdress | Unset = UNSET
+
+
 class Subnet(Struct):
     subnet: IPNet | Unset = UNSET
     gateway: IPAdress | Unset = UNSET
     # NOTE: don't know why this specific one can be None instead of Unset
     lease_range: LeaseRange | None | Unset = UNSET
-
-
-class LeaseRange(Struct):
-    start_ip: IPAdress | Unset = UNSET
-    end_ip: IPAdress | Unset = UNSET
 
 
 class Network(Struct):
